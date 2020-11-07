@@ -7,36 +7,59 @@
       </div>
       <form method="post" class="form" @submit="submit">
         <label for="username" class="form_box__label">
-          <input id="username"
-                 type="text"
-                 class="form_box__input g_border placeholder__move"
-                 placeholder="请输入用户名"
-                 autocomplete="none"
-                 ref="username"
-
-          >
-          <span class="tip  g_error" ref="username_msg"  style="display: none"></span>
+          <input
+            id="username"
+            type="text"
+            class="form_box__input g_border placeholder__move"
+            placeholder="请输入用户名"
+            autocomplete="none"
+            ref="username"
+          />
+          <span
+            class="tip g_error"
+            ref="username_msg"
+            style="display: none"
+          ></span>
         </label>
         <label for="password" class="form_box__label">
-          <input id="password"
-                 type="password"
-                 class="form_box__input g_border"
-                 placeholder="请输入密码"
-                 ref="password"
-
-          >
-          <span class="tip  g_error" ref="password_msg" style="display: none"></span>
+          <input
+            id="password"
+            type="password"
+            class="form_box__input g_border"
+            placeholder="请输入密码"
+            ref="password"
+          />
+          <span
+            class="tip g_error"
+            ref="password_msg"
+            style="display: none"
+          ></span>
         </label>
-        <router-link  :to="{name:'forgotPassword',path:'/forgotPassword'}" class="form_box__forget__password g_font_weight">忘记密码?</router-link>
+        <router-link
+          :to="{ name: 'forgotPassword', path: '/forgotPassword' }"
+          class="form_box__forget__password g_font_weight"
+          >忘记密码?</router-link
+        >
         <div class="form_box__submit">
-<!--          //todo 防抖节流-->
-          <router-link :to="{name:'Register',path:'/register'}" class="register g_font_weight">注册账号</router-link>
+          <!--          //todo 防抖节流-->
+          <router-link
+            :to="{ name: 'Register', path: '/register' }"
+            class="register g_font_weight"
+            >注册账号</router-link
+          >
           <label for="submit">
-            <input id="submit" type="submit" value="登录" class="form_box__submit_btn g_font_weight">
+            <input
+              id="submit"
+              type="submit"
+              value="登录"
+              class="form_box__submit_btn g_font_weight"
+            />
           </label>
         </div>
 
-        <div style="margin-top: 30px;display: flex;justify-content:space-around;">
+        <div
+          style="margin-top: 30px; display: flex; justify-content: space-around"
+        >
           <a>QQ</a>
           <a>GitHub</a>
           <a>微信</a>
@@ -47,60 +70,74 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import Container from '@/views/Container.vue';
+import { Component, Vue } from "vue-property-decorator";
+import Container from "@/views/Container.vue";
 
 @Component({
-  components: {Container}
+  components: { Container },
 })
 export default class Login extends Vue {
+  public $refs!: {
+    username: Element;
+    username_msg: HTMLSpanElement;
+    password: Element;
+    password_msg: HTMLSpanElement;
+    form: Element[];
+    nickname_msg: HTMLSpanElement;
+    email_msg: HTMLSpanElement;
+    password_confirm_msg: HTMLSpanElement;
+  };
 
-  loginObj: {username: string;password: string}= {
-    username: '',
-    password:''
-
-  }
-  successClass(el,el_msg){
-    el.classList.remove('g_error')
-    el.classList.add('g_success')
-    el_msg.style.display = 'none'
-    el_msg.innerText = ''
-  }
-  failClass(el,el_msg,msg){
-    el.classList.remove('g_success')
-    el.classList.add('g_error')
-    el_msg.style.display = 'inline-block'
-    el_msg.innerText = msg
-  }
-  submit(e){
-    e.preventDefault()
-    this.loginObj.username = e.target.username.value
-    this.loginObj.password = e.target.password.value
-    if(this.loginObj.username===''){
-      this.failClass(this.$refs.username,this.$refs.username_msg,'请输入用户名')
-      return
-    }else {
-      if(this.loginObj.password===''){
-        this.failClass(this.$refs.password,this.$refs.password_msg,'请输入密码')
-        return
+  loginObj: { username: string; password: string } = {
+    username: "",
+    password: "",
+  };
+  successClass: successClassConfig = (el, el_msg) => {
+    el.classList.remove("g_error");
+    el.classList.add("g_success");
+    el_msg.style.display = "none";
+    el_msg.innerText = "";
+  };
+  failClass: failClassConfig = (el, el_msg, msg) => {
+    el.classList.remove("g_success");
+    el.classList.add("g_error");
+    el_msg.style.display = "inline-block";
+    el_msg.innerText = msg;
+  };
+  submit(e: any) {
+    e.preventDefault();
+    this.loginObj.username = e.target.username.value;
+    this.loginObj.password = e.target.password.value;
+    if (this.loginObj.username === "") {
+      this.failClass(
+        this.$refs.username,
+        this.$refs.username_msg,
+        "请输入用户名"
+      );
+      return;
+    } else {
+      if (this.loginObj.password === "") {
+        this.failClass(
+          this.$refs.password,
+          this.$refs.password_msg,
+          "请输入密码"
+        );
+        return;
       }
-      this.successClass(this.$refs.password,this.$refs.password_msg)
-      this.successClass(this.$refs.username,this.$refs.username_msg)
-      this.$nextTick(()=>{
-        this.axios.post('/login',this.loginObj).then(res=>{
-          if(res.data.success===false){
-            this.$toast.error(`${res.data.msg}`)
-          }else {
-
-            this.$toast.success('登陆成功')
+      this.successClass(this.$refs.password, this.$refs.password_msg);
+      this.successClass(this.$refs.username, this.$refs.username_msg);
+      this.$nextTick(() => {
+        this.axios.post("/login", this.loginObj).then((res) => {
+          if (res.data.success === false) {
+            this.$toast.error(`${res.data.msg}`);
+          } else {
+            this.$router.push("/");
+            this.$toast.success("登陆成功");
           }
-        })
-      })
+        });
+      });
     }
-
   }
-
-
 }
 </script>
 <style scoped lang='scss'>
@@ -109,5 +146,4 @@ export default class Login extends Vue {
 .form_box {
   width: 450px;
 }
-
 </style>

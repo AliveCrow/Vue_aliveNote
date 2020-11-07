@@ -92,13 +92,20 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import Container from '@/views/Container.vue';
+import Login from '@/components/Login.vue';
 
 @Component({
   components: {Container}
 })
-export default class Register extends Vue {
+export default class Register extends Login {
 
-  registerObj: string[] = {
+  registerObj: {
+    username : string,
+    nickname : string,
+    email : string,
+    password : string,
+    password_confirm : string
+  } = {
     username : '',
     nickname : '',
     email : '',
@@ -106,7 +113,7 @@ export default class Register extends Vue {
     password_confirm : ''
   }
 
-  register(e){
+  register(e:any){
     e.preventDefault()
     this.$nextTick(()=> {
       this.rule().then(() => {
@@ -128,13 +135,13 @@ export default class Register extends Vue {
     })
   }
 
-  successClass(el,el_msg){
+  successClass:successClassConfig = (el,el_msg)=>{
     el.classList.remove('g_error')
     el.classList.add('g_success')
     el_msg.style.display = 'none'
     el_msg.innerText = ''
   }
-  failClass(el,el_msg,msg){
+  failClass:failClassConfig=(el,el_msg,msg)=>{
     el.classList.remove('g_success')
     el.classList.add('g_error')
     el_msg.style.display = 'inline-block'
@@ -150,50 +157,50 @@ export default class Register extends Vue {
       }
     })
   }
-  verificationUsername(username){
+  verificationUsername(username:string){
     const rule = /^[0-9A-Za-z]{6,24}$/
     if(rule.test(username)){
-      this.successClass(this.$refs.form[0],this.$refs.username_msg)
+      this.successClass(this.$refs.form[0],this.$refs.username_msg )
       return true
     }else {
       this.failClass(this.$refs.form[0],this.$refs.username_msg,'用户名是你的登录账户,只能使用字母(a-Z)和数字(0-9)')
       return false
     }
   }
-  verificationNickname(nickname){
+  verificationNickname(nickname:string){
     if(nickname!==''){
-      this.successClass(this.$refs.form[1],this.$refs.nickname_msg)
+      this.successClass(this.$refs.form[1],this.$refs.nickname_msg )
       return true
     }else {
-      this.failClass(this.$refs.form[1],this.$refs.nickname_msg,'请输入昵称')
+      this.failClass(this.$refs.form[1],this.$refs.nickname_msg ,'请输入昵称')
       return false
     }
   }
-  verificationEmail(email){
+  verificationEmail(email:string){
     const rule = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
     if(rule.test(email)){
-      this.successClass(this.$refs.form[2],this.$refs.email_msg)
+      this.successClass(this.$refs.form[2],this.$refs.email_msg )
       return true
     }else {
-      this.failClass(this.$refs.form[2],this.$refs.email_msg,'邮箱错误')
+      this.failClass(this.$refs.form[2],this.$refs.email_msg ,'邮箱错误')
       return false
     }
   }
-  verificationPassword(password){
+  verificationPassword(password:string){
     if(password.length>=8 && password.length<24 && /^[^\s]*$/.test(password)){
-      this.successClass(this.$refs.form[3],this.$refs.password_msg)
+      this.successClass(this.$refs.form[3],this.$refs.password_msg )
       return true
     }else {
-      this.failClass(this.$refs.form[3],this.$refs.password_msg,'至少8位字符串,至多24位,不能有空格')
+      this.failClass(this.$refs.form[3],this.$refs.password_msg as HTMLSpanElement,'至少8位字符串,至多24位,不能有空格')
       return false
     }
   }
-  passwordIsSame(password1,password2){
+  passwordIsSame(password1:string,password2:string){
     if(password1===password2){
-      this.successClass(this.$refs.form[4],this.$refs.password_confirm_msg)
+      this.successClass(this.$refs.form[4],this.$refs.password_confirm_msg as HTMLSpanElement)
       return true
     }else {
-      this.failClass(this.$refs.form[4],this.$refs.password_confirm_msg,'这两个密码不一致，请重试。')
+      this.failClass(this.$refs.form[4],this.$refs.password_confirm_msg as HTMLSpanElement,'这两个密码不一致，请重试。')
       return false
     }
   }

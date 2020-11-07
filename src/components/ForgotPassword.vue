@@ -32,11 +32,12 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
+import Login from '@/components/Login.vue';
 
 @Component
-export default class ForgotPassword extends Vue {
+export default class ForgotPassword extends Login {
 
-  submit(e){
+  submit(e:any){
     e.preventDefault()
     const resetEmail = {
       'resetEmail': e.target.email.value

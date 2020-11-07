@@ -5,3 +5,5 @@ declare module '*.vue' {
 }
 
 declare module "element-ui";
+
+declare module "vue-eva-icons";

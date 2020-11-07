@@ -9,10 +9,12 @@ import store from './store'
 import Toast from 'vue-toastification'
 import "vue-toastification/dist/index.css";
 
+import EvaIcons from 'vue-eva-icons';
 
 
 Vue.config.productionTip = false
-Vue.use(VueAxios,_axios)
+Vue.use(VueAxios, _axios)
+Vue.use(EvaIcons)
 Vue.use(Toast, {
   transition: "Vue-Toastification__fade",
   maxToasts: 20,
