@@ -1,13 +1,11 @@
 <template>
-  <transition name="slide" >
   <div id='Container_app' :key="keyNum">
     <div id="login_app">
-      <div class="form_box g_border">
-         <router-view></router-view>
-      </div>
+      <transition name="slide" >
+        <router-view ></router-view>
+      </transition>
     </div>
   </div>
-  </transition>
 
 </template>
 
@@ -21,7 +19,7 @@ export default class Container extends Vue {
 }
 </script>
 <style scoped lang='scss'>
-@import "src/assets/scss/var";
+@import "../assets/scss/var";
 
 .slide-enter-active,
 .slide-leave-active {
@@ -64,19 +62,6 @@ export default class Container extends Vue {
     100%{
       background-position: -10px 0;
     }
-  }
-
-  .form_box {
-    padding: 48px 40px 36px;
-    width: 450px;
-    height: 500px;
-    background-color: $background-color;
-    border-radius: 3px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
   }
 
 

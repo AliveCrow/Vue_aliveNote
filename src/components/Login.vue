@@ -1,145 +1,113 @@
 <template>
-<!--  <Container keyNum.num="1">-->
-    <!--    <div id="login_app">-->
-    <!--      <div class="form_box g_border">-->
   <div>
-    <div class="form_box__title">
-      <h2>登录</h2>
-      <span>使用您的用户名登录</span>
-    </div>
-    <form method="post" class="form">
-      <label for="username" class="form_box__label">
-        <input id="username"
-               type="text"
-               class="form_box__input g_border placeholder__move"
-               placeholder="请输入用户名"
-        >
-      </label>
-      <label for="password" class="form_box__label">
-        <input id="password"
-               type="password"
-               class="form_box__input g_border"
-               placeholder="请输入密码"
-        >
-      </label>
-      <a class="form_box__forget__password g_font_weight">忘记密码?</a>
-      <div class="form_box__submit">
-        <router-link :to="{name:'Register',path:'/register'}" class="register g_font_weight">注册账号</router-link>
-        <label for="submit">
-          <input id="submit" type="submit" value="登录" class="form_box__submit_btn">
+    <div class="form_box g_border">
+      <div class="form_box__title">
+        <h2>登录</h2>
+        <span>使用您的用户名登录</span>
+      </div>
+      <form method="post" class="form" @submit="submit">
+        <label for="username" class="form_box__label">
+          <input id="username"
+                 type="text"
+                 class="form_box__input g_border placeholder__move"
+                 placeholder="请输入用户名"
+                 autocomplete="none"
+                 ref="username"
+
+          >
+          <span class="tip  g_error" ref="username_msg"  style="display: none"></span>
         </label>
-      </div>
+        <label for="password" class="form_box__label">
+          <input id="password"
+                 type="password"
+                 class="form_box__input g_border"
+                 placeholder="请输入密码"
+                 ref="password"
 
-      <div style="margin-top: 30px;display: flex;justify-content:space-around;">
-        <a>QQ</a>
-        <a>GitHub</a>
-        <a>微信</a>
-      </div>
-    </form>
+          >
+          <span class="tip  g_error" ref="password_msg" style="display: none"></span>
+        </label>
+        <router-link  :to="{name:'forgotPassword',path:'/forgotPassword'}" class="form_box__forget__password g_font_weight">忘记密码?</router-link>
+        <div class="form_box__submit">
+<!--          //todo 防抖节流-->
+          <router-link :to="{name:'Register',path:'/register'}" class="register g_font_weight">注册账号</router-link>
+          <label for="submit">
+            <input id="submit" type="submit" value="登录" class="form_box__submit_btn g_font_weight">
+          </label>
+        </div>
+
+        <div style="margin-top: 30px;display: flex;justify-content:space-around;">
+          <a>QQ</a>
+          <a>GitHub</a>
+          <a>微信</a>
+        </div>
+      </form>
+    </div>
   </div>
-
-    <!--      </div>-->
-    <!--    </div>-->
-<!--  </Container>-->
 </template>
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import Container from '@/components/Container.vue';
+import Container from '@/views/Container.vue';
 
 @Component({
   components: {Container}
 })
 export default class Login extends Vue {
 
+  loginObj: {username: string;password: string}= {
+    username: '',
+    password:''
+
+  }
+  successClass(el,el_msg){
+    el.classList.remove('g_error')
+    el.classList.add('g_success')
+    el_msg.style.display = 'none'
+    el_msg.innerText = ''
+  }
+  failClass(el,el_msg,msg){
+    el.classList.remove('g_success')
+    el.classList.add('g_error')
+    el_msg.style.display = 'inline-block'
+    el_msg.innerText = msg
+  }
+  submit(e){
+    e.preventDefault()
+    this.loginObj.username = e.target.username.value
+    this.loginObj.password = e.target.password.value
+    if(this.loginObj.username===''){
+      this.failClass(this.$refs.username,this.$refs.username_msg,'请输入用户名')
+      return
+    }else {
+      if(this.loginObj.password===''){
+        this.failClass(this.$refs.password,this.$refs.password_msg,'请输入密码')
+        return
+      }
+      this.successClass(this.$refs.password,this.$refs.password_msg)
+      this.successClass(this.$refs.username,this.$refs.username_msg)
+      this.$nextTick(()=>{
+        this.axios.post('/login',this.loginObj).then(res=>{
+          if(res.data.success===false){
+            this.$toast.error(`${res.data.msg}`)
+          }else {
+
+            this.$toast.success('登陆成功')
+          }
+        })
+      })
+    }
+
+  }
+
+
 }
 </script>
 <style scoped lang='scss'>
-@import "src/assets/scss/var";
+@import "src/assets/scss/form";
 
-
-.form_box__title {
-  margin-bottom: 30px;
-
-  h2 {
-    font-weight: 400;
-  }
-
-  span {
-    display: inline-block;
-    margin-top: 10px;
-  }
+.form_box {
+  width: 450px;
 }
-.form {
-  display: flex;
-  flex-direction: column;
-  input {
-    width: 100%;
-    height: 54px;
-    outline: none;
-    border-radius: 5px;
-  }
-
-  .form_box__label {
-    margin-bottom: 30px;
-
-    .form_box__input {
-      padding: 13px;
-      font-size: 1.3rem;
-
-      &::placeholder {
-        font-size: 1rem;
-      }
-
-      &:focus {
-        border: 2px solid $inputBorderColor;
-        padding: 12px 14px;
-
-        &::placeholder {
-          opacity: 0;
-        }
-      }
-    }
-  }
-
-  .form_box__forget__password {
-    margin-top: -15px;
-    color: $inputBorderColor;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  .form_box__submit {
-    margin-top: 40px;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1rem;
-    color: $inputBorderColor;
-    height: 40px;
-
-    .register {
-      //width: ;
-      flex-basis: 100px;
-      display: block;
-      text-decoration: none;
-      color: $inputBorderColor;
-    }
-
-    .form_box__submit_btn {
-      cursor: pointer;
-      margin: 0;
-      width: 70px;
-      height: 40px;
-      border: none;
-      display: inline-block;
-      text-align: center !important;
-      background-color: $inputBorderColor;
-      color: #fff;
-    }
-  }
-}
-
 
 </style>

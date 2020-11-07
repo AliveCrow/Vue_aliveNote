@@ -2,33 +2,39 @@
 
 import Vue from 'vue';
 import axios from "axios";
-require('dotenv').config() // 默认读取项目根目录下的.env文件
 
 
-const VUE_APP_BASE_API_DEV = 'http://localhost:3000';
-const VUE_APP_BASE_API_PROD = ''
+const baseUrl = 'http://localhost:3000';
+const apiUrl = ''
 
 // Full config:  https://github.com/axios/axios#request-config
-axios.defaults.baseURL = process.env.VUE_APP_BASE_API_DEV
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-const config = {
+const option = {
+    baseURL: baseUrl,
     timeout:5000,
     // timeout: 60 * 1000, // Timeout
     // withCredentials: true, // Check cross-site Access-Control
 };
 
 // 创建一个axios实例
-const _axios = axios.create(config);
+const _axios = axios.create(option);
+
+
+export interface AxiosRequestConfig<T> {
+    load: boolean;
+}
 
 // request拦截器 ==> 对请求参数进行处理
-_axios.interceptors.request.use(
-    function(config) {
+_axios.interceptors.request.use((config)=>{
         // 可以在发送请求之前做些事情
         // 比如请求参数的处理、在headers中携带token等等
+        config.load = false
+        console.log(config);
+
         return config;
-    },
+},
     function(error) {
         // 处理请求错误
         return Promise.reject(error);
@@ -36,9 +42,11 @@ _axios.interceptors.request.use(
 );
 
 // respone拦截器 ==> 对响应做处理
-_axios.interceptors.response.use(
-    function(response) {
+_axios.interceptors.response.use((response)=>{
         // Do something with response data
+        response.load = true
+        console.log(response);
+
         return response;
     },
     function(error) {
