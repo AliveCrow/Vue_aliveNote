@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <Nav @toggle-slide="toggleSlide" @getUser="getUser" @showCard="showCard" />
-    <Card  className="userInfo_card" :showCard="isShow">
+    <Card  className="userInfo_card" :isShow="cardShow">
       <template v-slot:title >
         <img :src="user.avatar" alt="" class="header_avatar">
       </template>
@@ -16,7 +16,7 @@
       </template>
     </Card>
     <div id='ContainerBox_app'>
-      <ContainerBoxLeft :show="show" />
+      <ContainerBoxLeft :show="slideShow" />
       <router-view />
     </div>
   </div>
@@ -41,16 +41,16 @@ export default class Home extends Vue {
     avatar:'',
     email:''
   }
-  isShow:boolean= false;
-
+  cardShow:boolean= false;
+  slideShow:boolean = false;
   toggleSlide(e){
-    this.show = !this.show
+    this.slideShow = !this.slideShow
   }
   getUser(userData:user){
     this.user = userData
   }
   showCard(e){
-    console.log(e);
+    this.cardShow = !this.cardShow
   }
   created(){
 

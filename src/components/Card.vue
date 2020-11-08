@@ -1,8 +1,10 @@
 <template>
-  <div id='Card_app' :class="className" v-show="showCard" >
-    <slot name="title" class="title"></slot>
-    <slot name="content" class="content"></slot>
-  </div>
+  <transition name="fade">
+    <div id='Card_app' :class="className" v-show="showCard" >
+      <slot name="title" class="title"></slot>
+      <slot name="content" class="content"></slot>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -19,6 +21,17 @@ export default class Card extends Vue {
 </script>
 <style scoped lang='scss'>
 @import "src/assets/scss/var";
+
+.fade-enter-active,
+.fade-leave-active{
+  transition: all .25s ease .05s;
+}
+
+.fade-enter,
+.fade-leave-to{
+  opacity: 0;
+}
+
 #Card_app {
   position: absolute;
   height: 400px;

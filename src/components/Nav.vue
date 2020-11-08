@@ -18,7 +18,7 @@
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
       <!--        <div class="my_app"></div>-->
-      <div class="avatar" @click="showCard(isSHow)">
+      <div class="avatar" @click="showCard">
         <img :src="user.avatar" alt="" height="100%">
       </div>
     </div>
@@ -52,13 +52,10 @@ export default class Nav extends Vue {
   }
 
   @Emit('showCard')
-  showCard(showCard: boolean) {
-    if (showCard) {
-      return showCard=false;
-    } else {
-      return showCard = true;
-    }
+  showCard(){
+
   }
+
 
   created() {
     this.axios.get('/users').then(res => {
@@ -102,7 +99,7 @@ export default class Nav extends Vue {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
+  border-bottom: 1px solid $defaultBorderColor;
   .icons_box {
     height: 100%;
     display: flex;

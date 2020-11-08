@@ -9,6 +9,7 @@ const routes: Array<RouteConfig> = [
     {
         path: '/',
         name: 'Home',
+        redirect:'/note',
         meta: {
             requireAuth: true
         },
