@@ -25,7 +25,13 @@ declare global {
   interface refsConfig {
     username:string;
   }
-
+ type user={
+    id:number;
+    username:string;
+    nickname:string;
+    avatar:string;
+    email:string
+}
 
 
 

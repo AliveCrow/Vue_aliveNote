@@ -1,26 +1,33 @@
 <template>
   <div id="app">
-      <router-view/>
+    <router-view/>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
 </script>
 
 <style lang="scss">
 @import "assets/scss/var";
-*{
-  padding:0;
-  margin:0;
+
+* {
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
 }
-body,html{
+
+body, html {
 }
-a{
+
+li{
+  list-style: none;
+}
+a {
   text-decoration: none;
-  color:#202124;
+  color: #202124;
 }
+
 #app {
   font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -31,6 +38,7 @@ a{
 
 #nav {
   padding: 30px;
+
   a {
     font-weight: bold;
     color: #2c3e50;
@@ -49,14 +57,15 @@ a{
   font-weight: 500;
 }
 
-.g_error{
+.g_error {
   color: $error;
   border-color: $error;
 }
-.g_success{
-   color: $success;
-   border-color: $success;
- }
+
+.g_success {
+  color: $success;
+  border-color: $success;
+}
 
 
 .tip {

@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 import axios from "axios";
+import router from '@/router';
 
 
 const baseUrl = 'http://localhost:3000';
@@ -30,9 +31,10 @@ export interface AxiosRequestConfig<T> {
 _axios.interceptors.request.use((config) => {
         // 可以在发送请求之前做些事情
         // 比如请求参数的处理、在headers中携带token等等
-        config.load = false
-        console.log(config);
-
+        config.headers.load = false
+        if(localStorage.getItem('jwt_token')){
+            config.headers.Authorization  = localStorage.getItem('jwt_token')
+        }
         return config;
 },
     function(error) {
@@ -45,7 +47,9 @@ _axios.interceptors.request.use((config) => {
 _axios.interceptors.response.use((response) => {
         // Do something with response data
         response.load = true
-        console.log(response);
+        if(response.data.success === -1){
+            router.replace('/login').then(()=>Vue.$toast.error('token过期'))
+        }
 
         return response;
     },

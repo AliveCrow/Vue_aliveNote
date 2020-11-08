@@ -49,6 +49,7 @@
           >
           <label for="submit">
             <input
+              ref="submit"
               id="submit"
               type="submit"
               value="登录"
@@ -72,6 +73,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Container from "@/views/Container.vue";
+import {Action, Mutation, namespace} from 'vuex-class';
+
+const UserInfoStore = namespace('userInfo')
 
 @Component({
   components: { Container },
@@ -87,6 +91,15 @@ export default class Login extends Vue {
     email_msg: HTMLSpanElement;
     password_confirm_msg: HTMLSpanElement;
   };
+
+  canClick:boolean = true;
+
+    @UserInfoStore.State(state => state) userInfo;
+  @UserInfoStore.Mutation('getLoginInfo') getLoginInfo!:Function;
+  @UserInfoStore.Action('login') login!:Function;
+
+  created(){
+  }
 
   loginObj: { username: string; password: string } = {
     username: "",
@@ -106,37 +119,49 @@ export default class Login extends Vue {
   };
   submit(e: any) {
     e.preventDefault();
-    this.loginObj.username = e.target.username.value;
-    this.loginObj.password = e.target.password.value;
-    if (this.loginObj.username === "") {
-      this.failClass(
-        this.$refs.username,
-        this.$refs.username_msg,
-        "请输入用户名"
-      );
-      return;
-    } else {
-      if (this.loginObj.password === "") {
+      this.loginObj.username = e.target.username.value;
+      this.loginObj.password = e.target.password.value;
+      if (this.loginObj.username === "") {
         this.failClass(
-          this.$refs.password,
-          this.$refs.password_msg,
-          "请输入密码"
+            this.$refs.username,
+            this.$refs.username_msg,
+            "请输入用户名"
         );
         return;
+      } else {
+        if (this.loginObj.password === "") {
+          this.failClass(
+              this.$refs.password,
+              this.$refs.password_msg,
+              "请输入密码"
+          );
+          return;
+        }
+        this.successClass(this.$refs.password, this.$refs.password_msg);
+        this.successClass(this.$refs.username, this.$refs.username_msg);
+        if (this.canClick) {
+          this.$refs.submit.style.cursor = 'not-allowed'
+          this.$refs.submit.style.backgroundColor = 'rgba(25, 93, 229,.6)'
+          this.canClick = false;
+          this.getLoginInfo({
+            username: this.loginObj.username,
+            password: this.loginObj.password
+          });
+          this.login().then(res => {
+              this.$nextTick(() => {
+                this.canClick = true;
+                this.$refs.submit.style.cursor = 'default'
+                this.$refs.submit.style.backgroundColor = 'rgba(25, 93, 229,1)'
+                if (res) {
+                this.$router.push('/')
+              }
+            });
+          }).catch(error=>{
+            console.log('error');
+          })
+        }
       }
-      this.successClass(this.$refs.password, this.$refs.password_msg);
-      this.successClass(this.$refs.username, this.$refs.username_msg);
-      this.$nextTick(() => {
-        this.axios.post("/login", this.loginObj).then((res) => {
-          if (res.data.success === false) {
-            this.$toast.error(`${res.data.msg}`);
-          } else {
-            this.$router.push("/");
-            this.$toast.success("登陆成功");
-          }
-        });
-      });
-    }
+
   }
 }
 </script>
