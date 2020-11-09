@@ -1,6 +1,6 @@
 <template>
-  <div :class="[show===true?'container-box__left show':'container-box__left' ]"  ref="slideGroup" style="width: 280px">
-    <div class="icon_box selected" >
+  <div :class="[show===true?'container-box__left show ':'container-box__left ' ]+className" ref="slideGroup"  >
+    <div class="icon_box selected">
       <eva-icon name="calendar-outline" class="icons  container-box__left___calendar"></eva-icon>
       <span>记事</span>
     </div>
@@ -25,60 +25,68 @@ import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 
 @Component
 export default class ContainerBoxLeft extends Vue {
-  private $refs!:{
-    slideGroup:Element[]
-  }
+  public $refs!: {
+    slideGroup: HTMLDivElement;
+  };
+  @Prop(Boolean) show: boolean = false;
+  @Prop(String) className:string|undefined;
 
-@Prop(Boolean) show:boolean=false;
-mounted(){
-  this.$refs.slideGroup.children.forEach((el,index)=>{
-    el.addEventListener('click',(e)=>{
-      this.$refs.slideGroup.children.forEach(el=>el.classList.remove('selected'));
-      this.$refs.slideGroup.children[index].classList.add('selected')
-    })
-  })
-}
+  mounted() {
+    Array.from(this.$refs.slideGroup.children).forEach((el: Element, index: number) => {
+      el.addEventListener('click', () => {
+        Array.from(this.$refs.slideGroup.children).forEach((el: Element) => el.classList.remove('selected'));
+        this.$refs.slideGroup.children[index].classList.add('selected');
+      });
+    });
+  }
 
 }
 </script>
 <style scoped lang='scss'>
 @import "../../assets/scss/var";
-.show{
-  width: 240px;
-  box-shadow: 0 7px 7px rgba(#000,.4);
-  .selected{
+
+.show {
+  width: 200px;
+  box-shadow: 0 7px 4px rgba(#000, .4);
+  background-color: #fff;
+  .selected {
     background-color: $info !important;
   }
-  .icon_box{
-    width: 220px!important;
-    >span{
-      opacity: 1!important;
-      color: $defaultFontColor!important;
+
+  .icon_box {
+    width: 220px !important;
+
+    > span {
+      opacity: 1 !important;
+      color: $defaultFontColor !important;
     }
   }
 }
-.container-box__left{
-  .selected {
-    fill: #fff !important;
-    &:hover{
-      background-color: $info !important;
-    }
-    >span{
-      color: #fff!important;
-    }
-    >.icons{
-      background-color: $info !important;
 
-    }
-  }
+.container-box__left {
+
   overflow: hidden;
-  height: 100%;
   display: flex;
+  height: 100%;
   flex-direction: column;
   transition: all .2s ease .1s;
   padding-top: 10px;
-  .icon_box{
-    margin: 0 10px;
+  //position: absolute;
+  .selected {
+    fill: #fff !important;
+    &:hover {
+      background-color: $info !important;
+    }
+    > span {
+      color: #fff !important;
+    }
+    > .icons {
+      background-color: $info !important;
+    }
+  }
+
+  .icon_box {
+    //margin: 0 10px;
     cursor: pointer;
     display: flex;
     width: 60px;
@@ -88,25 +96,26 @@ mounted(){
     border-radius: 30px;
     transition: all .25s ease .05s;
     background-color: transparent;
-    >span{
+    > span {
       min-width: 50px;
       margin-left: 20px;
       opacity: 0;
       transition: all .25s ease .1s;
-
     }
-    &:hover{
-      background-color:rgba(#efefef,.8);
+    &:hover {
+      background-color: rgba(#efefef, .8);
       width: 220px;
-      >span{
+      > span {
         opacity: 1;
         color: $defaultFontColor;
       }
-      >.icons{
-        background-color:rgba(#efefef,.8);
+
+      > .icons {
+        background-color: rgba(#efefef, .8);
       }
     }
-    .icons{
+
+    .icons {
       min-width: 46px;
       height: 46px;
       line-height: 56px;
@@ -115,7 +124,8 @@ mounted(){
       transition: all .2s ease .05s;
 
     }
-    .container-box__left___calendar{
+
+    .container-box__left___calendar {
 
     }
   }

@@ -40,7 +40,6 @@ export const actions: ActionTree<userInfoState, RootState> = {
                 return false
             } else {
                 Vue.$toast.success('登录成功');
-                // context.commit('setUserInfo', res.data.userInfo);
                 localStorage.setItem('jwt_token', res.data.token);
                 localStorage.setItem('AliveUserId', res.data.id);
                 return true

@@ -34,6 +34,12 @@ _axios.interceptors.request.use((config) => {
         config.headers.load = false
         if(localStorage.getItem('jwt_token')){
             config.headers.Authorization  = localStorage.getItem('jwt_token')
+        }else {
+            router.replace('/login').then(()=> {
+                setTimeout(()=>{
+                    Vue.$toast.error('未登录');
+                },800)
+            })
         }
         return config;
 },
@@ -47,15 +53,37 @@ _axios.interceptors.request.use((config) => {
 _axios.interceptors.response.use((response) => {
         // Do something with response data
         response.load = true
-        if(response.data.success === -1){
+        if(response.status!==200){
             router.replace('/login').then(()=>Vue.$toast.error('token过期'))
         }
-
         return response;
     },
     function(error) {
         // Do something with response error
-        return Promise.reject(error);
+        let errorText :{
+            status?:number,
+            msg:string,
+        }
+        let err = JSON.parse(JSON.stringify(error.response))
+        switch (err.status) {
+            case 404:
+                err.msg='请求错误'
+                break
+            case 401:
+                err.msg='token失效'
+                router.push('/login').then(r =>{})
+                break
+            case 500:
+                err.msg='服务器错误'
+                break
+            default:
+                err.msg='连接服务器失败,请退出重试!'
+        }
+        errorText={
+            status:err.status,
+            msg:err.msg
+        }
+        return Promise.reject(errorText)
     }
 );
 

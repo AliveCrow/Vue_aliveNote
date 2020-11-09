@@ -5,5 +5,7 @@ declare module '*.vue' {
 }
 
 declare module "element-ui";
-
+declare module  "vue-clickaway";
 declare module "vue-eva-icons";
+declare module "vueisotope";
+

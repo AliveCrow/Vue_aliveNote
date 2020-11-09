@@ -92,13 +92,22 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
 import Container from '@/views/Container.vue';
-import Login from '@/components/Login.vue';
+import {failClassConfig, successClassConfig} from '@/typs';
 
 @Component({
   components: {Container}
 })
-export default class Register extends Login {
-  // canClick:boolean = false;
+export default class Register extends Vue {
+  public $refs!:{
+    register:HTMLInputElement;
+    form:HTMLFormElement;
+    username_msg:HTMLSpanElement;
+    nickname_msg: HTMLSpanElement;
+    email_msg: HTMLSpanElement;
+    password_msg:HTMLSpanElement;
+    password_confirm_msg: HTMLSpanElement;
+  }
+  canClick:boolean = false;
   registerObj: {
     username: string,
     nickname: string,

@@ -5,14 +5,22 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+import isotope from 'vueisotope'
+
+
 
 import Toast from 'vue-toastification'
 import "vue-toastification/dist/index.css";
+
+import { directive as onClickaway } from 'vue-clickaway'
 
 import EvaIcons from 'vue-eva-icons';
 
 
 Vue.config.productionTip = false
+
+Vue.component('isotope',isotope)
+Vue.directive('on-clickaway', onClickaway)
 Vue.use(VueAxios, _axios)
 Vue.use(EvaIcons)
 Vue.use(Toast, {

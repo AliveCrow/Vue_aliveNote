@@ -1,13 +1,17 @@
 <template>
   <div id='Nav_app'>
-    <div class="icons_box">
-      <eva-icon name="menu-outline"
-                fill="#000"
-                class="btn_open_slide icons"
-                @click="toggleSlide"
-      ></eva-icon>
+    <div class="icons_box"  >
+      <div v-on-clickaway="closeSlide">
+        <eva-icon name="menu-outline"
+                  fill="#000"
+                  class="btn_open_slide icons"
+                  @click="toggleSlide"
+        ></eva-icon>
+        <ContainerBoxLeft :show="slideShow" className="ContainerBoxLeft"  />
+      </div>
       <span>{{ user.nickname }}</span>
     </div>
+
     <label class="search-input">
       <eva-icon name="search-outline" fill="#000" class="search_icon icons"></eva-icon>
       <input type="text" class="search" placeholder="搜索"/>
@@ -18,8 +22,22 @@
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
       <!--        <div class="my_app"></div>-->
-      <div class="avatar" @click="showCard">
-        <img :src="user.avatar" alt="" height="100%">
+      <div class="avatar" v-on-clickaway="closeCard" >
+        <img :src="user.avatar" alt="" height="100%"  @click="showCard">
+        <Card  className="userInfo_card" :isShow="cardShow" animationName="fade" >
+          <template v-slot:title >
+            <img :src="user.avatar" alt="" class="header_avatar">
+          </template>
+          <template v-slot:content >
+            <p class="userInfo_card__nickname userInfo_card_manage">{{ user.nickname }}</p>
+            <p class="userInfo_card__username userInfo_card_manage">{{user.username}}</p>
+            <button class="userInfo_card_manage userInfo_card_manage__btn g_border">管理账号信息</button>
+            <div class="userInfo_card_manage not_complete">
+              暂未开放
+            </div>
+            <button class="userInfo_card_manage  g_border exit" >退出</button>
+          </template>
+        </Card>
       </div>
     </div>
   </div>
@@ -28,32 +46,43 @@
 <script lang="ts">
 import {Component, Emit, Inject, Provide, Vue, Watch} from 'vue-property-decorator';
 import {State} from 'vuex-class';
-
-@Component
+import Card from '@/components/Card.vue';
+import {user} from '@/typs';
+import ContainerBoxLeft from '@/components/Home/ContainerBoxLeft.vue';
+@Component({
+  components: {ContainerBoxLeft, Card}
+})
 export default class Nav extends Vue {
   user: user = {
-    number: 0,
+    id: 0,
     username: '',
     nickname: '',
     avatar: '',
     email: ''
   };
   isSHow: boolean = false;
-  @State('userInfo', {namespace: 'userInfo'}) userInfo;
+  cardShow:boolean= false;
+  slideShow:boolean = false;
 
-  @Emit()
+
+  @State('userInfo', {namespace: 'userInfo'}) userInfo!:user;
+
   toggleSlide() {
-    return false;
+    this.slideShow = !this.slideShow
   }
-
+  closeSlide(){
+    this.slideShow = false
+  }
   @Emit('getUser')
   getUser(userData: user) {
     return userData;
   }
 
-  @Emit('showCard')
   showCard(){
-
+    this.cardShow = !this.cardShow
+  }
+  closeCard(){
+    this.cardShow = false
   }
 
 
@@ -61,7 +90,7 @@ export default class Nav extends Vue {
     this.axios.get('/users').then(res => {
       this.$nextTick(() => {
         this.user = {
-          number: res.data.userInfo.id,
+          id: res.data.userInfo.id,
           username: res.data.userInfo.username,
           nickname: res.data.userInfo.nickname,
           avatar: res.data.userInfo.avatar,
@@ -69,6 +98,8 @@ export default class Nav extends Vue {
         };
         this.getUser(this.user);
       });
+    }).catch(error=>{
+      console.log(error);
     });
 
 
@@ -105,7 +136,11 @@ export default class Nav extends Vue {
     display: flex;
     flex-direction: row;
     align-items: center;
-
+    .ContainerBoxLeft{
+      position: absolute;
+      bottom: -63px;
+      z-index: 20;
+    }
     .icons {
       height: 50px;
       width: 50px;
@@ -234,6 +269,71 @@ export default class Nav extends Vue {
       border-radius: 50%;
       overflow: hidden;
     }
+
+    .userInfo_card{
+      >span{
+        font-size: 2rem;
+      }
+
+    }
+    .header_avatar{
+      height: 80px;
+      width: 80px;
+      margin: 15px;
+      border-radius: 50%;
+    }
+    .userInfo_card_manage{
+      margin: 10px;
+    }
+    .userInfo_card__nickname{
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    .userInfo_card__username{
+      margin: 0;
+      color: rgba($defaultFontColor,.5);
+    }
+    .userInfo_card_manage__btn{
+      margin: 20px;
+      height: 40px;
+      width: 200px;
+      border-radius: 50px;
+      background-color: #fff;
+      font-size: 1rem;
+      outline: none;
+      cursor: pointer;
+      &:hover{
+        background-color: rgba($defaultBorderColor,.1);
+      }
+    }
+    .not_complete{
+      width: 100%;
+      height: 50px;
+      margin: 0;
+      line-height: 50px;
+      border-top: $defaultBorderColor 1px solid ;
+      border-bottom: $defaultBorderColor 1px solid ;
+      cursor: pointer;
+      &:hover{
+        background-color: rgba($defaultBorderColor,.1);
+      }
+    }
+    .exit{
+      margin: 30px;
+      height: 40px;
+      width: 80px;
+      border-radius: 5px;
+      background-color: #fff;
+      font-size: 1rem;
+      outline: none;
+      cursor: pointer;
+      &:hover{
+        background-color: rgba($error,.7);
+        color: #fff;
+      }
+    }
+
   }
 }
 

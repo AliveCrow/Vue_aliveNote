@@ -1,6 +1,6 @@
 <template>
-  <transition name="fade">
-    <div id='Card_app' :class="className" v-show="showCard" >
+  <transition :name="animationName">
+    <div id='Card_app' :class="className" v-show="showCard" :style="{'width':width,'height':height}" >
       <slot name="title" class="title"></slot>
       <slot name="content" class="content"></slot>
     </div>
@@ -9,10 +9,14 @@
 
 <script lang="ts">
 import {Component, Prop, PropSync, Vue} from 'vue-property-decorator';
+import {mapGetters} from 'vuex';
 
 @Component
 export default class Card extends Vue {
-  @Prop(String) className:string|'';
+  @Prop(String) className: string  | undefined;
+  @Prop(String) width:string|undefined;
+  @Prop(String) height:string|undefined;
+  @Prop(String) animationName:string|undefined;
   @PropSync('isShow',{type:Boolean}) showCard!:boolean;
 
 
