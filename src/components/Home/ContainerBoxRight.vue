@@ -1,29 +1,47 @@
 <template>
   <div class="container-box__right">
-    <InputCard :isShow.sync="isShow" @open="open" v-on-clickaway="close"/>
-    <div class="magic_box" >
+    <InputCard :isShow.sync="isShow" v-on-clickaway="close" @submit="updateList"/>
+
+    <div class="magic_box">
       <div class="top_note list">
-        <div style="text-align: left">置顶的notes</div>
-        <isotope :list="topList" class="isoDefault" :options='option' key="1">
-          <NoteCard v-for="element in topList" @click="selected=element" :key="element.id" >
+        <div style="text-align: left" @click="showModal">置顶的notes</div>
+        <isotope :list="topList" class="isoDefault" :options='option'>
+          <NoteCard :backgroundColor="element.color"
+                    v-for="element in topList"
+                    :key="element.id"
+                    :noteData="element"
+                    @deleteNote="deleteNote"
+                    @pickColor="pickColor($event,element)"
+                    @set-archive="setArchive(element)"
+                    @changeView="changeView($event,element)"
+
+          >
             <template v-slot:title>
-              {{ element.id }}
+              {{ element.title }}
             </template>
             <template v-slot:content>
-              {{ element.name }}
+              {{ element.content }}
             </template>
           </NoteCard>
         </isotope>
       </div>
       <div class="list">
         <div style="text-align: left">notes</div>
-        <isotope :list="list" id="root_isotope" class="isoDefault" :options='option' key="2">
-          <NoteCard v-for="element in list" @click="selected=element" :key="element.id" >
+        <isotope :list="list" id="root_isotope" class="isoDefault" :options='option'>
+          <NoteCard :backgroundColor="element.color"
+                    v-for="element in list"
+                    :key="element.id"
+                    :noteData="element"
+                    @deleteNote="deleteNote"
+                    @pickColor="pickColor($event,element)"
+                    @set-archive="setArchive(element)"
+                    @changeView="changeView($event,element)"
+          >
             <template v-slot:title>
-              {{ element.id }}
+              {{ element.title }}
             </template>
             <template v-slot:content>
-              {{ element.name }}
+              {{ element.content }}
             </template>
           </NoteCard>
         </isotope>
@@ -33,66 +51,164 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Inject, Mixins, ProvideReactive, Vue, Watch} from 'vue-property-decorator';
 import InputCard from '@/components/InputCard.vue';
 import Card from '@/components/Card.vue';
 import NoteCard from '@/components/NoteCard.vue';
 import {Action, namespace} from 'vuex-class';
+import HomeMixin from '@/mixins/HomeMixin';
+import updateNoteMixin from '@/mixins/updateNoteMixin';
+import ArchiveTip from '@/components/ArchiveTip.vue';
 
-const notesStore = namespace('notesStore')
+const notesStore = namespace('notesStore');
 
 @Component({
-  components: {NoteCard, Card, InputCard},
+  components: {NoteCard, Card, InputCard}
 })
-export default class ContainerBoxRight extends Vue {
-  @notesStore.Action('getNotes') getNotes!:Function;
-  @notesStore.State('notes') notes!:[];
-
-
+export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin) {
+  @notesStore.Action('getNotes') getNotes!: Function;
+  @notesStore.State('notes') notes: any;
+  list: [] = [];
+  topList: [] = [];
+  allList: [] = [];
   option = {
     getSortData: {
       id: 'id'
     },
     sortBy: 'id'
   };
-  list:[]=[];
-  topList:[]=[];
   selected = null;
   isShow: boolean = false;
-  open() {
-    this.isShow = true;
-  }
+  noteData:{}= {
+
+  };
+  tags:[]|undefined
+
   close() {
     this.isShow = false;
   }
 
-  created(){
-    this.$nextTick(()=>{
-      this.getNotes().then(res=>{
-        this.topList = res.filter(item=>item.isTop===true)
-        this.list = res.filter(item=>item.isTop===false)
-        console.log(this.topList,this.list);
+  showModal() {
+    this.$modal.show('my-first-modal');
+  }
+
+  init() {
+    this.getNotes().then(result => {
+      this.allList = result.res;
+
+      this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
+      this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+    });
+  }
+
+  created() {
+    this.init();
+  }
+
+  updateList(e) {
+    this.axios.post(`/label`, e).then(res => {
+      if (res.data.stateCode === 0) {
+        this.$toast.success('添加成功', {
+          position: 'bottom-left'
+        });
+        this.init();
+      }
+    });
+  }
+
+  deleteNote(e) {
+    this.axios.delete(`/label/${e.id}`).then(res => {
+      if (res.data.stateCode === 0) {
+        this.$toast.error(res.data.msg, {
+          position: 'bottom-left'
+        });
+        this.allList.splice(this.allList.findIndex(item => item.id === e.id), 1);
+        this.$nextTick(() => {
+          this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
+          this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+        });
+      }
+    });
+  }
+
+  pickColor(e,element){
+    element.color = e
+    this.axios.patch(`/label/${element.id}`,{color:e}).then(res=>{
+      if(res.data.stateCode===0){
+        this.$toast.success('更改成功',{
+          timeout:1000
+        })
+      }else {
+        this.$toast.error('更改失败',{
+          timeout:1000
+        })
+      }
+    }).catch(error=>{
+      this.$toast.error('更改失败',{
+        timeout:1000
       })
     })
   }
 
+  setArchive(element){
+    element.archiveId = element.userId
+    this.axios.patch(`/label/${element.id}`,{archiveId:element.userId}).then(res=>{
+      if(res.data.stateCode===0){
+        this.$toast.success(ArchiveTip,{
+          position: 'bottom-left'
+        })
+        this.allList.splice(this.allList.findIndex(item => item.id === element.id), 1);
+        this.$nextTick(() => {
+          this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
+          this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+        });
+      }else {
+        this.$toast.error('更改失败',{
+          timeout:1000
+        })
+      }
+    }).catch(error=>{
+      this.$toast.error('更改失败',{
+        timeout:1000
+      })
+    })
 
+  }
+
+
+  changeView(e,element){
+    this.axios.patch(`/label/${e}`,{isTop:element.isTop}).then(res=>{
+      console.log(res);
+      this.topList.splice(this.topList.findIndex(item => item.id === e), 1);
+      this.list.splice(this.list.findIndex(item => item.id === e), 1);
+
+      this.$nextTick(() => {
+        this.topList = this.allList.filter((item ) => item.isTop && item.archiveId === null && item.isTop===true);
+        this.list = this.allList.filter((item) => !item.isTop && item.archiveId === null && item.isTop===false);
+      });
+    })
+
+  }
 }
 </script>
 <style scoped lang='scss'>
 
 .item {
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   box-sizing: border-box;
   color: #333;
   word-break: break-all;
-
 }
 
 .isoDefault {
   min-height: 60px;
   width: 100%;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
 }
 
 #root_isotope {
@@ -103,19 +219,27 @@ export default class ContainerBoxRight extends Vue {
 .container-box__right {
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+
   .list {
     margin-left: 20px;
     margin-bottom: 40px;
-
-  }
-  .magic_box{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
+  .list-complete-item {
+    transition: all 1s;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .list-complete-enter, .list-complete-leave-to
+    /* .list-complete-leave-active for below version 2.1.8 */
+  {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .list-complete-leave-active {
+    position: absolute;
+  }
 }
 </style>

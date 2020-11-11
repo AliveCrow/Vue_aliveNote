@@ -6,6 +6,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import isotope from 'vueisotope'
+import vmodal from 'vue-js-modal'
 
 
 
@@ -15,14 +16,16 @@ import "vue-toastification/dist/index.css";
 import { directive as onClickaway } from 'vue-clickaway'
 
 import EvaIcons from 'vue-eva-icons';
+import NoteCard from '@/components/NoteCard.vue';
 
 
 Vue.config.productionTip = false
 
-Vue.component('isotope',isotope)
 Vue.directive('on-clickaway', onClickaway)
+// Vue.use(VueDragZone)
 Vue.use(VueAxios, _axios)
 Vue.use(EvaIcons)
+Vue.use(vmodal)
 Vue.use(Toast, {
   transition: "Vue-Toastification__fade",
   maxToasts: 20,
@@ -40,6 +43,9 @@ Vue.use(Toast, {
   icon: true,
   rtl: false
 });
+
+Vue.component('NoteCard',NoteCard)
+Vue.component('isotope',isotope)
 
 new Vue({
   router,

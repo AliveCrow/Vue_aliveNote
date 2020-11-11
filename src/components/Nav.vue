@@ -22,8 +22,8 @@
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
       <!--        <div class="my_app"></div>-->
-      <div class="avatar" v-on-clickaway="closeCard" >
-        <img :src="user.avatar" alt="" height="100%"  @click="showCard">
+      <div class="avatar" v-on-clickaway="closeCard" @click="showCard">
+          <img :src="user.avatar" alt="头像" height="100%" >
         <Card  className="userInfo_card" :isShow="cardShow" animationName="fade" >
           <template v-slot:title >
             <img :src="user.avatar" alt="" class="header_avatar">
@@ -35,7 +35,7 @@
             <div class="userInfo_card_manage not_complete">
               暂未开放
             </div>
-            <button class="userInfo_card_manage  g_border exit" >退出</button>
+            <button class="userInfo_card_manage  g_border exit"  @click="exit">退出</button>
           </template>
         </Card>
       </div>
@@ -101,8 +101,6 @@ export default class Nav extends Vue {
     }).catch(error=>{
       console.log(error);
     });
-
-
     // this.$nextTick(()=>{
     //   if(userId){
     //
@@ -112,7 +110,10 @@ export default class Nav extends Vue {
     //   }
     // })
   }
-
+  exit(){
+    localStorage.removeItem('jwt_token')
+    this.$router.push('login')
+  }
   setUserInfo() {
 
   }

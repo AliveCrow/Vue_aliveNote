@@ -1,6 +1,6 @@
 <template>
-  <div class="container-box__right_input" ref="box__right_input">
-    <div class="input_box">
+  <div class="container-box__right_input" ref="box__right_input" >
+    <div class="input_box" >
       <label for="one">
         <input type="text" ref="input_title" @focus="open" id="one" class="input_1" placeholder="标题">
       </label>
@@ -12,10 +12,15 @@
         <div id="two" class="input_2" ref="input_2" contenteditable="true">
           <slot></slot>
         </div>
+        <div class="showTag">
+          <div class="showTag_foreach" v-for="item in selectedTags" :key="item.id">
+            {{ item.name }}
+          </div>
+        </div>
         <div class="input_box__fun">
           <div>
-            <blockquote style="display: inline;position: relative" v-on-clickaway="closeCard" @click="showCard">
-              <eva-icon name="color-palette-outline" class="icons add_color"></eva-icon>
+            <blockquote style="display: inline;position: relative" @click="showCard">
+              <eva-icon name="color-palette-outline" class="icons add_color" v-on-clickaway="closeCard"></eva-icon>
               <Card height="104px"
                     width="138px"
                     :isShow="cardShow"
@@ -33,25 +38,28 @@
                 </template>
               </Card>
             </blockquote>
-            <blockquote style="display: inline" @click="archive">
+            <blockquote style="display: inline" @click="goArchive">
               <eva-icon name="archive-outline"
                         class="icons archive"
-
               ></eva-icon>
             </blockquote>
-            <blockquote style="display: inline;position: relative" v-on-clickaway="closeCard1" @click="showCard1">
-              <eva-icon name="bookmark-outline" class="icons tags"></eva-icon>
-              <Card height="104px"
-                    width="138px"
-                    :isShow="cardShow1"
+            <blockquote style="display: inline;position: relative" v-on-clickaway="closeTagCard">
+              <eva-icon name="bookmark-outline" class="icons tags" @click="showTagCard"></eva-icon>
+              <Card height="200px"
+                    :isShow="cardTagShow"
                     animationName="fade"
-                    class-name="colorSelect"
+                    class-name="tagsSelect"
               >
                 <template v-slot:content>
                   <ul class="tags_box">
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
+                    <!--                    最多27个-->
+                    <li v-for="(item,index) in allTags" :key="item.id" @click="selectTag(item)">
+                      <eva-icon name="square-outline" style="line-height: 12px" height="18px"
+                                v-if="!selectedTags.includes(item)"></eva-icon>
+                      <eva-icon name="checkmark-square-2-outline" style="line-height: 12px" height="18px"
+                                v-else></eva-icon>
+                      <p>{{ item.name }}</p>
+                    </li>
                   </ul>
                 </template>
               </Card>
@@ -65,38 +73,32 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, PropSync, Vue} from 'vue-property-decorator';
+import {Component, Emit, Mixins, PropSync, Vue} from 'vue-property-decorator';
 import Card from '@/components/Card.vue';
 import ArchiveTip from '@/components/ArchiveTip.vue';
+import HomeMixin from '@/mixins/HomeMixin';
+import CardMixin from '@/mixins/CardMixin';
 
 @Component({
   components: {Card}
 })
-export default class InputCard extends Vue {
-  public $refs!: {
-    box__right_input: HTMLDivElement;
-    input_2: HTMLDivElement;
-    input_title: HTMLInputElement;
-  };
+export default class InputCard extends Mixins(HomeMixin, CardMixin) {
   @PropSync('isShow', {type: Boolean}) show!: boolean;
-  isTop: boolean = false;
-  cardShow: boolean = false;
-  cardShow1: boolean = false;
-  colorArr: string[] = [
-    '#fff', '#99b898', '#feceab', '#ff847c', '#e84a5f',
-    '#de7119', '#dee3e2', '#116979', '#18b0b0',
-    '#8fcfd1', '#df5e88', '#f6ab6c'
-  ];
-  selectedColor: string = '#fff';
-  tags:string[]=[]
+  selectedTags: [] = [];
+  selected: number = null;
 
-
-  @Emit('open')
+  // @Emit('open')
   open() {
+    this.show = true;
   }
 
-  topBtn() {
-    this.isTop = !this.isTop;
+  selectTag(tag) {
+    let i = this.selectedTags.indexOf(tag);
+    if (i !== -1) {
+      this.selectedTags.splice(i, 1);
+    } else {
+      this.selectedTags.push(tag);
+    }
   }
 
   selectColor(item: string) {
@@ -105,56 +107,62 @@ export default class InputCard extends Vue {
     this.selectedColor = item;
   }
 
-  showCard() {
-    this.cardShow = !this.cardShow;
-  };
-
-  closeCard() {
-    this.cardShow = false;
-  };
-
-  showCard1() {
-    this.cardShow1 = !this.cardShow1;
-  };
-
-  closeCard1() {
-    this.cardShow1 = false;
-  };
-
   reset() {
     this.$refs.box__right_input.style.backgroundColor = '#fff';
     this.$refs.input_title.style.backgroundColor = '#fff';
     this.$refs.input_title.value = '';
     this.$refs.input_2.textContent = '';
+    this.$refs.input_2.setAttribute('data-placeholder', '添加记事...');
     this.isTop = false;
-    this.tags = []
+    this.selectedTags = [];
   };
 
-  submit() {
+  @Emit('submit')
+  submit(type: string) {
     this.show = false;
+    let titleContent=this.$refs.input_title.value
+    let textContent=this.$refs.input_2.textContent
+    if(titleContent==='' && textContent===''){
+      this.$refs.input_title.value = '空白记事'
+    }
     let note = {
       title: this.$refs.input_title.value,
       content: this.$refs.input_2.textContent,
       isTop: this.isTop,
       color: this.selectedColor,
-      tags: [
-        {id: 1, name: '哈哈哈'}
-      ]
+      tags: this.selectedTags
     };
-
-    this.$nextTick(()=>{
-      this.reset()
-    })
+    this.reset();
+    return note;
   }
 
-  archive() {
-    this.submit();
-    this.$toast(ArchiveTip, {
-      //@ts-ignore
-      position: 'bottom-left'
+  goArchive() {
+    this.show = false;
+    this.axios.get('/users').then(res => {
+      let note = {
+        title: this.$refs.input_title.value,
+        content: this.$refs.input_2.textContent,
+        isTop: this.isTop,
+        color: this.selectedColor,
+        archiveId: parseInt(res.data.userInfo.Archive.id),
+        tags: [
+          {id: 1, name: '哈哈哈'}
+        ]
+      };
+      this.axios.post('/label', note).then(res => {
+        if (res.data.stateCode === 0) {
+          this.$toast.success(ArchiveTip, {
+            position: 'bottom-left'
+          });
+          this.reset();
+        }
+      });
+    }).catch(error => {
+      console.log(error);
     });
-  }
 
+
+  }
 
   created() {
     this.$nextTick(() => {
@@ -171,7 +179,6 @@ export default class InputCard extends Vue {
   }
 
 
-
 }
 </script>
 <style scoped lang='scss'>
@@ -181,11 +188,12 @@ export default class InputCard extends Vue {
   width: 500px;
   display: flex;
   flex-direction: column;
-  margin: 50px auto;
-  transform: translateX(-120px);
+  margin: 50px auto 120px;
+  //transform: translateX(-120px);
   border-radius: 10px;
   box-shadow: 0 0 6px rgba($defaultFontColor, .4);
   transition: background-color .2s ease;
+  z-index: 100;
 
   .input_box, {
     position: relative;
@@ -237,11 +245,64 @@ export default class InputCard extends Vue {
       }
     }
 
+    .showTag {
+      max-height: 120px;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: nowrap;
+      .showTag_foreach{
+        line-height: 10px;
+        height: 20px;
+        margin: 5px;
+        padding: 5px;
+        min-width: 60px;
+        background-color: $searchBgcColor;
+        border-radius:3px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: .6rem;
+      }
+    }
+
     .input_box__fun {
       display: flex;
       margin: 10px;
       align-items: center;
       justify-content: space-between;
+
+      .tagsSelect {
+        max-height: 200px;
+        top: -90px !important;
+        left: 50px;
+
+        .tags_box {
+          display: flex;
+          flex-wrap: wrap;
+          overflow: hidden;
+          padding: 5px;
+
+          li {
+            height: 20px;
+            margin: 6px;
+            display: flex;
+            align-items: center;
+            font-size: .6rem;
+            cursor: pointer;
+
+            > p {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            &:hover {
+              background-color: $searchBgcColor;
+            }
+
+          }
+        }
+      }
 
       .colorSelect {
         box-shadow: none !important;

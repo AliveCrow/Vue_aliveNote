@@ -58,7 +58,12 @@ const routes: Array<RouteConfig> = [
                 component: () => import('@/components/ForgotPassword.vue')
             }
         ]
-    }
+    },
+    {
+        path: '/test',
+        name: 'TSET',
+        component: () => import('@/components/test.vue')
+    },
 ];
 
 const router = new VueRouter({

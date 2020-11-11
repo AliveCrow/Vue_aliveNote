@@ -1,5 +1,5 @@
 <template>
-  <transition :name="animationName">
+  <transition :name="animationName" >
     <div id='Card_app' :class="className" v-show="showCard" :style="{'width':width,'height':height}" >
       <slot name="title" class="title"></slot>
       <slot name="content" class="content"></slot>
@@ -38,7 +38,7 @@ export default class Card extends Vue {
 
 #Card_app {
   position: absolute;
-  height: 400px;
+  //height: 400px;
   width: 350px;
   background-color: #fff;
   z-index: 10;

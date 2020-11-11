@@ -107,7 +107,7 @@ export default class Register extends Vue {
     password_msg:HTMLSpanElement;
     password_confirm_msg: HTMLSpanElement;
   }
-  canClick:boolean = false;
+  canClick:boolean = true;
   registerObj: {
     username: string,
     nickname: string,
@@ -128,6 +128,7 @@ export default class Register extends Vue {
 
   register(e: any) {
     e.preventDefault();
+    // debugger
     this.$refs.register.style.cursor = 'not-allowed';
     this.$refs.register.style.backgroundColor = 'rgba(25, 93, 229,.6)';
     this.$nextTick(() => {
@@ -140,13 +141,14 @@ export default class Register extends Vue {
               this.$refs.register.style.cursor = 'default';
               this.$refs.register.style.backgroundColor = 'rgba(25, 93, 229,1)';
             },700)
+            console.log(res);
             if (res.data.stateCode === -1) {
               this.$toast.error(res.data.msg);
               return;
             }
             this.$toast.success('注册成功');
             setTimeout(() => {
-              this.$router.push({path: 'home'});
+              this.$router.push({path: 'login'});
             }, 1000);
           });
         }
