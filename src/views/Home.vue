@@ -42,10 +42,8 @@ export default class Home extends Vue {
 #home {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100%;
   #ContainerBox_app{
-    height: 100%;
     width: 100%;
     padding-left: 80px;
   }

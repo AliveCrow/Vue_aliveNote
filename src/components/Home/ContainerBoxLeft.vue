@@ -1,18 +1,18 @@
 <template>
   <div :class="[show===true?'container-box__left show ':'container-box__left ' ]+className" ref="slideGroup"  >
-    <div class="icon_box selected">
+    <div class="icon_box selected" @click="routeTo('notes')">
       <eva-icon name="calendar-outline" class="icons  container-box__left___calendar"></eva-icon>
       <span>记事</span>
     </div>
-    <div class="icon_box">
+    <div class="icon_box"  @click="routeTo('tags')">
       <eva-icon name="attach-outline" class="icons container-box__left___attach"></eva-icon>
       <span>标签</span>
     </div>
-    <div class="icon_box">
+    <div class="icon_box"  @click="routeTo('archive')">
       <eva-icon name="hard-drive-outline" class="icons container-box__left___hard"></eva-icon>
       <span>归档</span>
     </div>
-    <div class="icon_box">
+    <div class="icon_box"  @click="routeTo('rec')">
       <eva-icon name="trash-2-outline" class="icons container-box__left___trash"></eva-icon>
       <span>回收站</span>
     </div>
@@ -30,6 +30,10 @@ export default class ContainerBoxLeft extends Vue {
   };
   @Prop(Boolean) show: boolean = false;
   @Prop(String) className:string|undefined;
+
+  routeTo(where:String){
+    this.$router.push({path:`/${where}`})
+  }
 
   mounted() {
     Array.from(this.$refs.slideGroup.children).forEach((el: Element, index: number) => {

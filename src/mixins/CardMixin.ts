@@ -33,6 +33,22 @@ export default class CardMixin extends Vue {
     showTagCard(){
         this.cardTagShow = !this.cardTagShow;
     }
+
+    cardShowModel:boolean=false
+    showCardModel() {
+        console.log('2');
+        this.cardShowModel = !this.cardShowModel;
+    };
+    cardTagShowModel:boolean=false
+    showTagCardModel(){
+        this.cardTagShowModel = !this.cardTagShowModel;
+    }
+    closeCardModel() {
+        this.cardShowModel = false
+    };
+    closeTagCardModel(){
+        this.cardTagShowModel = false
+    }
     closeTagCard(){
         this.cardTagShow = false;
     }

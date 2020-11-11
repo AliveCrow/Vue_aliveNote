@@ -1,6 +1,6 @@
 <template>
-  <div class="container-box__right_input" ref="box__right_input" >
-    <div class="input_box" >
+  <div class="container-box__right_input" ref="box__right_input">
+    <div class="input_box">
       <label for="one">
         <input type="text" ref="input_title" @focus="open" id="one" class="input_1" placeholder="标题">
       </label>
@@ -9,9 +9,10 @@
         <eva-icon name="toggle-right" class="icons  " v-else></eva-icon>
       </div>
       <blockquote v-show="show">
-        <div id="two" class="input_2" ref="input_2" contenteditable="true">
-          <slot></slot>
-        </div>
+        <at v-model="html">
+          <div id="two" class="input_2" ref="input_2" contenteditable="true" v-html="html">
+          </div>
+        </at>
         <div class="showTag">
           <div class="showTag_foreach" v-for="item in selectedTags" :key="item.id">
             {{ item.name }}
@@ -86,7 +87,7 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
   @PropSync('isShow', {type: Boolean}) show!: boolean;
   selectedTags: [] = [];
   selected: number = null;
-
+  html:string = ''
   // @Emit('open')
   open() {
     this.show = true;
@@ -120,14 +121,14 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
   @Emit('submit')
   submit(type: string) {
     this.show = false;
-    let titleContent=this.$refs.input_title.value
-    let textContent=this.$refs.input_2.textContent
-    if(titleContent==='' && textContent===''){
-      this.$refs.input_title.value = '空白记事'
+    let titleContent = this.$refs.input_title.value;
+    let textContent = this.$refs.input_2.innerHTML;
+    if (titleContent === '' && textContent === '') {
+      this.$refs.input_title.value = '空白记事';
     }
     let note = {
       title: this.$refs.input_title.value,
-      content: this.$refs.input_2.textContent,
+      content: this.$refs.input_2.innerHTML,
       isTop: this.isTop,
       color: this.selectedColor,
       tags: this.selectedTags
@@ -250,14 +251,15 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
       overflow-y: auto;
       display: flex;
       flex-wrap: nowrap;
-      .showTag_foreach{
+
+      .showTag_foreach {
         line-height: 10px;
         height: 20px;
         margin: 5px;
         padding: 5px;
         min-width: 60px;
         background-color: $searchBgcColor;
-        border-radius:3px;
+        border-radius: 3px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;

@@ -6,7 +6,10 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import isotope from 'vueisotope'
-import vmodal from 'vue-js-modal'
+import vmodal from 'vue-js-modal' //
+import At from 'vue-at'
+import SweetModal from 'sweet-modal-vue/src/plugin.js'
+
 
 
 
@@ -25,7 +28,7 @@ Vue.directive('on-clickaway', onClickaway)
 // Vue.use(VueDragZone)
 Vue.use(VueAxios, _axios)
 Vue.use(EvaIcons)
-Vue.use(vmodal)
+Vue.use(SweetModal)
 Vue.use(Toast, {
   transition: "Vue-Toastification__fade",
   maxToasts: 20,
@@ -46,6 +49,7 @@ Vue.use(Toast, {
 
 Vue.component('NoteCard',NoteCard)
 Vue.component('isotope',isotope)
+Vue.component('At',At)
 
 new Vue({
   router,

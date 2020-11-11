@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" >
     <router-view/>
   </div>
 </template>
@@ -37,6 +37,7 @@ a {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #202124;
+
 }
 
 #nav {
@@ -77,6 +78,5 @@ a {
   width: 100%;
   display: inline-block;
 }
-
 
 </style>

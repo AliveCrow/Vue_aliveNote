@@ -22,5 +22,6 @@ export default class ContainerBox extends Vue {
 @import "../../assets/scss/var";
 #ContainerBox_app{
 
+
 }
 </style>

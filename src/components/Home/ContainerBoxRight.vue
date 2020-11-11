@@ -1,11 +1,12 @@
 <template>
   <div class="container-box__right">
     <InputCard :isShow.sync="isShow" v-on-clickaway="close" @submit="updateList"/>
-
     <div class="magic_box">
       <div class="top_note list">
         <div style="text-align: left" @click="showModal">置顶的notes</div>
+
         <isotope :list="topList" class="isoDefault" :options='option'>
+
           <NoteCard :backgroundColor="element.color"
                     v-for="element in topList"
                     :key="element.id"
@@ -14,13 +15,17 @@
                     @pickColor="pickColor($event,element)"
                     @set-archive="setArchive(element)"
                     @changeView="changeView($event,element)"
+                    @click.native="toggleShow($event,element)"
 
           >
             <template v-slot:title>
               {{ element.title }}
             </template>
             <template v-slot:content>
-              {{ element.content }}
+              <at >
+                <div   v-html="element.content">
+                </div>
+              </at>
             </template>
           </NoteCard>
         </isotope>
@@ -32,6 +37,7 @@
                     v-for="element in list"
                     :key="element.id"
                     :noteData="element"
+                    className="clicked"
                     @deleteNote="deleteNote"
                     @pickColor="pickColor($event,element)"
                     @set-archive="setArchive(element)"
@@ -189,6 +195,26 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     })
 
   }
+
+  vmodel:boolean=false
+  toggleShow(e,element){
+
+    return
+    this.vmodel = !this.vmodel
+    if(this.vmodel){
+      this.$modal.show(
+          `${e.toString()}`,
+          { text: 'This text is passed as a property' },
+      )
+      this.vmodel = false
+    }else {
+      this.$modal.hide(
+          `${e.toString()}`,
+          Card
+      )
+      this.vmodel = true
+    }
+  }
 }
 </script>
 <style scoped lang='scss'>
@@ -211,10 +237,10 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
   }
 }
 
+
 #root_isotope {
 
 }
-
 
 .container-box__right {
   height: 100%;

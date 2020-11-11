@@ -9,16 +9,21 @@ const routes: Array<RouteConfig> = [
     {
         path: '/',
         name: 'Home',
-        redirect:'/note',
+        redirect: '/note',
         meta: {
             requireAuth: true
         },
         component: Home,
         children: [
-        {
-            path: '/note',
-            name: 'Note',
-            component: () => import('@/components/Home/ContainerBoxRight.vue')
+            {
+                path: '/notes',
+                name: 'Notes',
+                component: () => import('@/components/Home/ContainerBoxRight.vue')
+            },
+            {
+                path: '/tags',
+                name:'Tags',
+                component:() => import('@/views/TagsManage.vue')
             }
         ]
     },
@@ -63,7 +68,7 @@ const routes: Array<RouteConfig> = [
         path: '/test',
         name: 'TSET',
         component: () => import('@/components/test.vue')
-    },
+    }
 ];
 
 const router = new VueRouter({
