@@ -1,18 +1,18 @@
 <template>
-  <div :class="[show===true?'container-box__left show ':'container-box__left ' ]+className" ref="slideGroup"  >
-    <div class="icon_box selected" @click="routeTo('notes')">
+  <div :class="[show===true?'container-box__left show ':'container-box__left ' ]+className" ref="slideGroup">
+    <div :class="[select==='notes'?'icon_box selected':'icon_box']"  @click="routeTo('notes');select='notes'">
       <eva-icon name="calendar-outline" class="icons  container-box__left___calendar"></eva-icon>
       <span>记事</span>
     </div>
-    <div class="icon_box"  @click="routeTo('tags')">
+    <div :class="[select==='tags'?'icon_box selected':'icon_box']" @click="routeTo('tags');select='tags'">
       <eva-icon name="attach-outline" class="icons container-box__left___attach"></eva-icon>
       <span>标签</span>
     </div>
-    <div class="icon_box"  @click="routeTo('archive')">
+    <div :class="[select==='archive'?'icon_box selected':'icon_box']" @click="routeTo('archive');select='archive'">
       <eva-icon name="hard-drive-outline" class="icons container-box__left___hard"></eva-icon>
       <span>归档</span>
     </div>
-    <div class="icon_box"  @click="routeTo('rec')">
+    <div :class="[select==='rec'?'icon_box selected':'icon_box']" @click="routeTo('rec');select='rec'">
       <eva-icon name="trash-2-outline" class="icons container-box__left___trash"></eva-icon>
       <span>回收站</span>
     </div>
@@ -29,19 +29,23 @@ export default class ContainerBoxLeft extends Vue {
     slideGroup: HTMLDivElement;
   };
   @Prop(Boolean) show: boolean = false;
-  @Prop(String) className:string|undefined;
+  @Prop(String) className: string | undefined;
+  select:string  = 'notes'
 
-  routeTo(where:String){
-    this.$router.push({path:`/${where}`})
+  created(){
+    let go = this.$route.fullPath.split('/')[1]
+    this.routeTo(go)
+    this.select = go
   }
 
-  mounted() {
-    Array.from(this.$refs.slideGroup.children).forEach((el: Element, index: number) => {
-      el.addEventListener('click', () => {
-        Array.from(this.$refs.slideGroup.children).forEach((el: Element) => el.classList.remove('selected'));
-        this.$refs.slideGroup.children[index].classList.add('selected');
-      });
-    });
+  routeTo(where: string) {
+    if(this.$route.fullPath === `/${where}`){
+      return
+    }else {
+      this.$router.push({path: `/${where}`});
+    }
+    this.select = where
+    localStorage.setItem('select',where)
   }
 
 }
@@ -53,6 +57,7 @@ export default class ContainerBoxLeft extends Vue {
   width: 200px;
   box-shadow: 0 7px 4px rgba(#000, .4);
   background-color: #fff;
+
   .selected {
     background-color: $info !important;
   }
@@ -78,12 +83,15 @@ export default class ContainerBoxLeft extends Vue {
   //position: absolute;
   .selected {
     fill: #fff !important;
+
     &:hover {
       background-color: $info !important;
     }
+
     > span {
       color: #fff !important;
     }
+
     > .icons {
       background-color: $info !important;
     }
@@ -100,15 +108,18 @@ export default class ContainerBoxLeft extends Vue {
     border-radius: 30px;
     transition: all .25s ease .05s;
     background-color: transparent;
+
     > span {
       min-width: 50px;
       margin-left: 20px;
       opacity: 0;
       transition: all .25s ease .1s;
     }
+
     &:hover {
       background-color: rgba(#efefef, .8);
       width: 220px;
+
       > span {
         opacity: 1;
         color: $defaultFontColor;

@@ -34,12 +34,6 @@ _axios.interceptors.request.use((config) => {
         config.headers.load = false
         if(localStorage.getItem('jwt_token')){
             config.headers.Authorization  = localStorage.getItem('jwt_token')
-        }else {
-            router.replace('/login').then(()=> {
-                setTimeout(()=>{
-                    Vue.$toast.error('未登录');
-                },800)
-            })
         }
         return config;
 },
@@ -71,7 +65,7 @@ _axios.interceptors.response.use((response) => {
                 break
             case 401:
                 err.msg='token失效'
-                router.push('/login').then(r =>{})
+                router.replace('/login').then(r =>{})
                 break
             case 500:
                 err.msg='服务器错误'

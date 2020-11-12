@@ -181,7 +181,7 @@ export default class NoteCard extends mixins(CardMixin) {
 
 
   mounted(){
-    this.$refs.modal.$el.childNodes[0].style.overflow = ''
+    this.$refs.modal.$el.childNodes[0].style.overflow='visible'
   }
 
   topBtn() {
@@ -250,7 +250,6 @@ export default class NoteCard extends mixins(CardMixin) {
 
 .clicked{
   width: 500px!important;
-
 }
 
 

@@ -49,11 +49,12 @@ export default class TagsManage extends Vue {
     display: flex;
     align-items: center;
     input,button{
-      height: 30px;
+      height: 40px;
       margin: 10px;
     }
     input{
-      transition: all .15s linear .05s;
+      width: 400px;
+      transition: all .1s linear .05s;
       padding:0 8px;
       border: 1px solid $defaultBorderColor;
       outline: none;

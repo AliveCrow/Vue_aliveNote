@@ -9,7 +9,7 @@ const routes: Array<RouteConfig> = [
     {
         path: '/',
         name: 'Home',
-        redirect: '/note',
+        redirect: '/notes',
         meta: {
             requireAuth: true
         },
@@ -18,11 +18,17 @@ const routes: Array<RouteConfig> = [
             {
                 path: '/notes',
                 name: 'Notes',
+                meta: {
+                    requireAuth: true
+                },
                 component: () => import('@/components/Home/ContainerBoxRight.vue')
             },
             {
                 path: '/tags',
                 name:'Tags',
+                meta: {
+                    requireAuth: true
+                },
                 component:() => import('@/views/TagsManage.vue')
             }
         ]
@@ -30,11 +36,13 @@ const routes: Array<RouteConfig> = [
     {
         path: '/userInfo',
         name: 'UserInfo',
+        meta: {
+            requireAuth: true
+        },
         component: () => import('@/views/UserInfo.vue')
     },
     {
         path: '/rel',
-        // name: 'Rel',
         redirect: '/login',
         component: () => import('@/views/Container.vue'),
         children: [
@@ -68,6 +76,11 @@ const routes: Array<RouteConfig> = [
         path: '/test',
         name: 'TSET',
         component: () => import('@/components/test.vue')
+    },
+    {
+        path:'*',
+        name:'NotFound',
+        component:()=>import('@/views/NotFound.vue')
     }
 ];
 
@@ -78,11 +91,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {
         if (localStorage.getItem('jwt_token')) {
-
-
             next();
         } else {
-            alert('token不存在');
+            Vue.$toast.error('token不存在')
+            // alert('token不存在');
             next({
                 path: '/login',
                 query: {

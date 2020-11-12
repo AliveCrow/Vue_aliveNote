@@ -155,7 +155,7 @@ export default class Login extends Vue {
             this.$refs.submit.style.cursor = 'default';
             this.$refs.submit.style.backgroundColor = 'rgba(25, 93, 229,1)';
             if (res) {
-              this.$router.push('/');
+              this.$router.push('/notes');
             }
           });
         }).catch((error:any) => {
