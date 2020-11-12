@@ -66,7 +66,7 @@ export default class CardMixin extends Vue {
         });
     }
     getTags() {
-        this.axios('/tag').then(res => {
+        this.axios('/tags').then(res => {
             if (res.data.stateCode === 0) {
                 this.allTags = res.data.res;
             }

@@ -22,7 +22,6 @@
     "vue-class-component": "^7.2.3",
     "vue-clickaway": "^2.2.2",
     "vue-eva-icons": "^1.1.1",
-    "vue-js-modal": "^2.0.0-rc.6",
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.2.0",
     "vue-toastification": "^1.7.8",

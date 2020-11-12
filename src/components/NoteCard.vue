@@ -1,11 +1,11 @@
 <template>
   <div>
     <div id='NoteCard_app':style="{'background-color':backgroundColor}">
+      <div class="to_top" ref="top1" @click="topBtn">
+        <eva-icon name="toggle-left-outline" ref="top2" class="icons" v-if="!isTop"></eva-icon>
+        <eva-icon name="toggle-right" class="icons" ref="top3" v-else></eva-icon>
+      </div>
       <blockquote @click="showContent">
-        <div class="to_top" @click="topBtn">
-          <eva-icon name="toggle-left-outline" class="icons" v-if="!isTop"></eva-icon>
-          <eva-icon name="toggle-right" class="icons  " v-else></eva-icon>
-        </div>
         <div class="title NoteCard_app_content">
           <slot name="title"></slot>
         </div>
@@ -161,9 +161,8 @@ import {Component, Emit, InjectReactive, Prop, PropSync, Provide, Vue, Watch} fr
 import Card from '@/components/Card.vue';
 import {mixins} from 'vue-class-component';
 import CardMixin from '@/mixins/CardMixin';
-import ArchiveTip from '@/components/ArchiveTip.vue';
-import updateNoteMixin from '@/mixins/updateNoteMixin';
-import index from '@/store';
+import {NoteDataType} from '@/typs';
+
 
 @Component({
   components: {Card}
@@ -176,7 +175,7 @@ export default class NoteCard extends mixins(CardMixin) {
   // @Prop(Object) noteData: object | undefined;
   @Prop(Array) selectedTags: [] | undefined;
   pickedTags: [] = [];
-  noteData: any;
+  noteData!: NoteDataType;
   isTop: boolean = this.noteData.isTop;
 
 
@@ -184,7 +183,7 @@ export default class NoteCard extends mixins(CardMixin) {
     this.$refs.modal.$el.childNodes[0].style.overflow='visible'
   }
 
-  topBtn() {
+  topBtn(e) {
     this.isTop = !this.isTop;
     this.syncedNoteData.isTop = this.isTop;
     this.changeView(this.noteData.id);
@@ -200,14 +199,14 @@ export default class NoteCard extends mixins(CardMixin) {
     let i = this.noteData.Tags.findIndex((v: { id: number }) => v.id === tag.id);
     if (i !== -1) {
       this.syncedNoteData.Tags.splice(i, 1);
-      this.axios.delete(`/label/${this.noteData.id}/tag/${tag.id}`).then(res => {
+      this.axios.delete(`/labels/${this.noteData.id}/tag/${tag.id}`).then(res => {
 
       });
     } else {
       //todo ?
       //@ts-ignore
       this.syncedNoteData.Tags.push(tag);
-      this.axios.post(`/label/${this.noteData.id}`, {tagId: tag.id}).then(res => {
+      this.axios.post(`/labels/${this.noteData.id}`, {tagId: tag.id}).then(res => {
       });
     }
   }
@@ -227,7 +226,7 @@ export default class NoteCard extends mixins(CardMixin) {
   setArchive() {
   }
 
-  showContent(){
+  showContent(e:Event){
     this.$refs.modal.open()
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${this.noteData.color}`
   }
@@ -271,6 +270,7 @@ export default class NoteCard extends mixins(CardMixin) {
   .to_top {
     opacity: 0;
     position: absolute;
+    top: 10px;
     right: 10px;
     transition: inherit;
     display: flex;

@@ -6,7 +6,6 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import isotope from 'vueisotope'
-import vmodal from 'vue-js-modal' //
 import At from 'vue-at'
 import SweetModal from 'sweet-modal-vue/src/plugin.js'
 

@@ -16,7 +16,7 @@ const mutations: MutationTree<notesStoreState> = {
 const actions: ActionTree<notesStoreState, RootState> = {
      async getNotes(context) {
          try {
-             let res = await Vue.axios.get('/label')
+             let res = await Vue.axios.get('/labels')
              return new Promise((resolve, reject) => {
                  if (res.data.stateCode === 0) {
                      context.commit('setNotes',res.data.res)

@@ -150,7 +150,7 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
           {id: 1, name: '哈哈哈'}
         ]
       };
-      this.axios.post('/label', note).then(res => {
+      this.axios.post('/labels', note).then(res => {
         if (res.data.stateCode === 0) {
           this.$toast.success(ArchiveTip, {
             position: 'bottom-left'

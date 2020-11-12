@@ -4,53 +4,11 @@
     <div class="magic_box">
       <div class="top_note list">
         <div style="text-align: left" @click="showModal">置顶的notes</div>
-
-        <isotope :list="topList" class="isoDefault" :options='option'>
-
-          <NoteCard :backgroundColor="element.color"
-                    v-for="element in topList"
-                    :key="element.id"
-                    :noteData="element"
-                    @deleteNote="deleteNote"
-                    @pickColor="pickColor($event,element)"
-                    @set-archive="setArchive(element)"
-                    @changeView="changeView($event,element)"
-                    @click.native="toggleShow($event,element)"
-
-          >
-            <template v-slot:title>
-              {{ element.title }}
-            </template>
-            <template v-slot:content>
-              <at >
-                <div   v-html="element.content">
-                </div>
-              </at>
-            </template>
-          </NoteCard>
-        </isotope>
+        <Waterfalls :is-top="true" :list-arr="topList" @asyncListArr="changeNote"></Waterfalls>
       </div>
       <div class="list">
         <div style="text-align: left">notes</div>
-        <isotope :list="list" id="root_isotope" class="isoDefault" :options='option'>
-          <NoteCard :backgroundColor="element.color"
-                    v-for="element in list"
-                    :key="element.id"
-                    :noteData="element"
-                    className="clicked"
-                    @deleteNote="deleteNote"
-                    @pickColor="pickColor($event,element)"
-                    @set-archive="setArchive(element)"
-                    @changeView="changeView($event,element)"
-          >
-            <template v-slot:title>
-              {{ element.title }}
-            </template>
-            <template v-slot:content>
-              {{ element.content }}
-            </template>
-          </NoteCard>
-        </isotope>
+        <Waterfalls :is-top="false" :list-arr="list" @asyncListArr="changeNote"></Waterfalls>
       </div>
     </div>
   </div>
@@ -65,17 +23,18 @@ import {Action, namespace} from 'vuex-class';
 import HomeMixin from '@/mixins/HomeMixin';
 import updateNoteMixin from '@/mixins/updateNoteMixin';
 import ArchiveTip from '@/components/ArchiveTip.vue';
+import Waterfalls from '@/components/Waterfalls.vue';
 
 const notesStore = namespace('notesStore');
 
 @Component({
-  components: {NoteCard, Card, InputCard}
+  components: {Waterfalls, NoteCard, Card, InputCard}
 })
 export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin) {
   @notesStore.Action('getNotes') getNotes!: Function;
   @notesStore.State('notes') notes: any;
-  list: [] = [];
-  topList: [] = [];
+  list: NoteCard[] = [];
+  topList: NoteCard[] = [];
   allList: [] = [];
   option = {
     getSortData: {
@@ -101,18 +60,18 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
   init() {
     this.getNotes().then(result => {
       this.allList = result.res;
-
       this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
       this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
     });
   }
+
 
   created() {
     this.init();
   }
 
   updateList(e) {
-    this.axios.post(`/label`, e).then(res => {
+    this.axios.post(`/labels`, e).then(res => {
       if (res.data.stateCode === 0) {
         this.$toast.success('添加成功', {
           position: 'bottom-left'
@@ -122,99 +81,108 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     });
   }
 
-  deleteNote(e) {
-    this.axios.delete(`/label/${e.id}`).then(res => {
-      if (res.data.stateCode === 0) {
-        this.$toast.error(res.data.msg, {
-          position: 'bottom-left'
-        });
-        this.allList.splice(this.allList.findIndex(item => item.id === e.id), 1);
-        this.$nextTick(() => {
-          this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
-          this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
-        });
-      }
-    });
-  }
-
-  pickColor(e,element){
-    element.color = e
-    this.axios.patch(`/label/${element.id}`,{color:e}).then(res=>{
-      if(res.data.stateCode===0){
-        this.$toast.success('更改成功',{
-          timeout:1000
-        })
-      }else {
-        this.$toast.error('更改失败',{
-          timeout:1000
-        })
-      }
-    }).catch(error=>{
-      this.$toast.error('更改失败',{
-        timeout:1000
-      })
-    })
-  }
-
-  setArchive(element){
-    element.archiveId = element.userId
-    this.axios.patch(`/label/${element.id}`,{archiveId:element.userId}).then(res=>{
-      if(res.data.stateCode===0){
-        this.$toast.success(ArchiveTip,{
-          position: 'bottom-left'
-        })
-        this.allList.splice(this.allList.findIndex(item => item.id === element.id), 1);
-        this.$nextTick(() => {
-          this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
-          this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
-        });
-      }else {
-        this.$toast.error('更改失败',{
-          timeout:1000
-        })
-      }
-    }).catch(error=>{
-      this.$toast.error('更改失败',{
-        timeout:1000
-      })
-    })
-
-  }
-
-
-  changeView(e,element){
-    this.axios.patch(`/label/${e}`,{isTop:element.isTop}).then(res=>{
-      console.log(res);
-      this.topList.splice(this.topList.findIndex(item => item.id === e), 1);
-      this.list.splice(this.list.findIndex(item => item.id === e), 1);
-
-      this.$nextTick(() => {
-        this.topList = this.allList.filter((item ) => item.isTop && item.archiveId === null && item.isTop===true);
-        this.list = this.allList.filter((item) => !item.isTop && item.archiveId === null && item.isTop===false);
-      });
-    })
-
-  }
-
-  vmodel:boolean=false
-  toggleShow(e,element){
-
-    return
-    this.vmodel = !this.vmodel
-    if(this.vmodel){
-      this.$modal.show(
-          `${e.toString()}`,
-          { text: 'This text is passed as a property' },
-      )
-      this.vmodel = false
+  changeNote(note:NoteCard){
+    if(!note.isTop){
+      this.list.push(note)
     }else {
-      this.$modal.hide(
-          `${e.toString()}`,
-          Card
-      )
-      this.vmodel = true
+      this.topList.push(note)
     }
+
   }
+
+  //
+  // deleteNote(e) {
+  //   this.axios.delete(`/labels/${e.id}`).then(res => {
+  //     if (res.data.stateCode === 0) {
+  //       this.$toast.error(res.data.msg, {
+  //         position: 'bottom-left'
+  //       });
+  //       this.allList.splice(this.allList.findIndex(item => item.id === e.id), 1);
+  //       this.$nextTick(() => {
+  //         this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
+  //         this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+  //       });
+  //     }
+  //   });
+  // }
+  //
+  // pickColor(e,element){
+  //   element.color = e
+  //   this.axios.patch(`/labels/${element.id}`,{color:e}).then(res=>{
+  //     if(res.data.stateCode===0){
+  //       this.$toast.success('更改成功',{
+  //         timeout:1000
+  //       })
+  //     }else {
+  //       this.$toast.error('更改失败',{
+  //         timeout:1000
+  //       })
+  //     }
+  //   }).catch(error=>{
+  //     this.$toast.error('更改失败',{
+  //       timeout:1000
+  //     })
+  //   })
+  // }
+  //
+  // setArchive(element){
+  //   element.archiveId = element.userId
+  //   this.axios.patch(`/labels/${element.id}`,{archiveId:element.userId}).then(res=>{
+  //     if(res.data.stateCode===0){
+  //       this.$toast.success(ArchiveTip,{
+  //         position: 'bottom-left'
+  //       })
+  //       this.allList.splice(this.allList.findIndex(item => item.id === element.id), 1);
+  //       this.$nextTick(() => {
+  //         this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
+  //         this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+  //       });
+  //     }else {
+  //       this.$toast.error('更改失败',{
+  //         timeout:1000
+  //       })
+  //     }
+  //   }).catch(error=>{
+  //     this.$toast.error('更改失败',{
+  //       timeout:1000
+  //     })
+  //   })
+  //
+  // }
+  //
+  // changeView(e,element){
+  //   this.axios.patch(`/labels/${e}`,{isTop:element.isTop}).then(res=>{
+  //     this.topList.splice(this.topList.findIndex(item => item.id === e), 1);
+  //     this.list.splice(this.list.findIndex(item => item.id === e), 1);
+  //
+  //     this.$nextTick(() => {
+  //       this.topList = this.allList.filter((item ) => item.isTop && item.archiveId === null && item.isTop===true);
+  //       this.list = this.allList.filter((item) => !item.isTop && item.archiveId === null && item.isTop===false);
+  //     });
+  //   })
+  //
+  // }
+  // vmodel:boolean=false
+  // toggleShow(e,element){
+  //
+  //   return
+  //   this.vmodel = !this.vmodel
+  //   if(this.vmodel){
+  //     this.$modal.show(
+  //         `${e.toString()}`,
+  //         { text: 'This text is passed as a property' },
+  //     )
+  //     this.vmodel = false
+  //   }else {
+  //     this.$modal.hide(
+  //         `${e.toString()}`,
+  //         Card
+  //     )
+  //     this.vmodel = true
+  //   }
+  // }
+
+
 }
 </script>
 <style scoped lang='scss'>

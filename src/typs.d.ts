@@ -1,6 +1,7 @@
 import {Vue} from 'vue/types/vue';
-
-
+import {POSITION} from 'vue-toastification';
+import {ToastOptions} from 'vue-toastification/dist/types/src/types';
+import {CommonOptions} from 'vue-toastification/src/types/index';
 
 
 interface GlobalConfig {
@@ -19,5 +20,12 @@ interface user {
     avatar: string;
     email: string
 }
-
+interface  NoteDataType {
+    id:number;
+    color:string;
+    archiveId:number;
+    userId:number;
+    isTop:boolean;
+    Tags:[]
+}
 
