@@ -46,6 +46,7 @@ export default class Home extends Vue {
   #ContainerBox_app{
     width: 100%;
     padding-left: 80px;
+
   }
 }
 </style>

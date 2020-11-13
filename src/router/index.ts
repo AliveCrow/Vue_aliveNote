@@ -30,6 +30,22 @@ const routes: Array<RouteConfig> = [
                     requireAuth: true
                 },
                 component:() => import('@/views/TagsManage.vue')
+            },
+            {
+                path: '/archive',
+                name:'Archive',
+                meta: {
+                    requireAuth: true
+                },
+                component:() => import('@/views/Archive.vue')
+            },
+            {
+                path: '/rec',
+                name:'Rec',
+                meta: {
+                    requireAuth: true
+                },
+                component:() => import('@/views/Rec.vue')
             }
         ]
     },

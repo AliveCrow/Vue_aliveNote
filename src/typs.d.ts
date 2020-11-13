@@ -23,7 +23,7 @@ interface user {
 interface  NoteDataType {
     id:number;
     color:string;
-    archiveId:number;
+    archiveId:number|null;
     userId:number;
     isTop:boolean;
     Tags:[]

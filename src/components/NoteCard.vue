@@ -15,74 +15,28 @@
           </slot>
         </div>
         <div class="showTag">
-          <div class="showTag_foreach" v-for="(item,index) in noteData.Tags" :key="index">
+          <div class="showTag_foreach" v-for="(item,index) in syncedNoteData.Tags" :key="index">
             {{ item.name }}
           </div>
         </div>
       </blockquote>
-      <div class="bottom_fun">
-        <blockquote style="display: inline;position: relative" v-on-clickaway="closeCard" @click="showCard">
-          <eva-icon name="color-palette-outline" class="icons" height="18px" width="18px"
-                    data-name="选择颜色"></eva-icon>
-          <Card height="104px"
-                width="138px"
-                :isShow="cardShow"
-                animationName="fade"
-                class-name="colorSelect"
-          >
-            <template v-slot:content>
-              <ul class="color_box">
-                <li :style="{'background-color': item}"
-                    v-for="(item,index) in colorArr"
-                    :key="index"
-                    @click="pickColor(item)"
-                ></li>
-              </ul>
-            </template>
-          </Card>
-        </blockquote>
-        <blockquote @click="setArchive">
-          <eva-icon name="archive-outline"
-                    class="icons"
-                    height="18px"
-                    width="18px"
-                    data-name="归档"
-          ></eva-icon>
-        </blockquote>
-        <blockquote style="display: inline;position: relative" v-on-clickaway="closeTagCard">
-          <eva-icon name="bookmark-outline" class="icons" height="18px" width="18px" data-name="添加标签"
-                    @click="showTagCard"></eva-icon>
-          <Card height="200px"
-                :isShow="cardTagShow"
-                animationName="fade"
-                class-name="tagSelect"
-          >
-            <template v-slot:content>
-              <ul class="tags_box">
-                <!--                    最多27个-->
-                <li v-for="(item,index) in allTags" :key="item.id" @click="selectTag(item)">
-                  <eva-icon name="square-outline" style="line-height: 12px" height="18px"
-                            v-if="noteData.Tags.findIndex(tag=>tag.id===item.id)===-1"></eva-icon>
-                  <eva-icon name="checkmark-square-2-outline" style="line-height: 12px" height="18px"
-                            v-else></eva-icon>
-                  <p>{{ item.name }}</p>
-                </li>
-              </ul>
-            </template>
-          </Card>
-        </blockquote>
-        <blockquote @click="deleteNote">
-          <eva-icon name="trash-2-outline" class="icons" height="18px" width="18px" data-name="删除"></eva-icon>
-        </blockquote>
-      </div>
+      <BottomFunc :modal="$refs.modal"
+                  :all-tags="allTags"
+                  :synced-note-data="syncedNoteData"
+                  @pickColor="pickColor"
+                  @set-archive="setArchive"
+                  @deleteNote="deleteNote"
+                  @restoreNote="restoreNote"
+
+      ></BottomFunc>
     </div>
     <sweet-modal ref="modal" >
       <template  v-slot:title >
-          {{noteData.title}}
+          {{syncedNoteData.title}}
       </template>
       <div class="content NoteCard_app_content">
-        <at v-model="noteData.content">
-          <div id="two" class="input_2" style="text-align: left;padding:8px;border: none;outline: none;letter-spacing:1px" ref="input_2" contenteditable="true" v-html="noteData.content">
+        <at v-model="syncedNoteData.content">
+          <div id="two" class="input_2" style="text-align: left;padding:8px;border: none;outline: none;letter-spacing:1px" ref="input_2" contenteditable="true" v-html="syncedNoteData.content">
             <slot name="content">
 
             </slot>
@@ -91,7 +45,7 @@
 
       </div>
       <div class="showTag" style="flex-wrap: wrap!important;margin-top: 40px">
-        <div class="showTag_foreach" v-for="(item,index) in noteData.Tags" :key="index" >
+        <div class="showTag_foreach" v-for="(item,index) in syncedNoteData.Tags" :key="index" >
           {{ item.name }}
         </div>
       </div>
@@ -138,7 +92,7 @@
                 <!--                    最多27个-->
                 <li v-for="(item,index) in allTags" :key="item.id" @click="selectTag(item)">
                   <eva-icon name="square-outline" style="line-height: 12px" height="18px"
-                            v-if="noteData.Tags.findIndex(tag=>tag.id===item.id)===-1"></eva-icon>
+                            v-if="syncedNoteData.Tags.findIndex(tag=>tag.id===item.id)===-1"></eva-icon>
                   <eva-icon name="checkmark-square-2-outline" style="line-height: 12px" height="18px"
                             v-else></eva-icon>
                   <p>{{ item.name }}</p>
@@ -162,31 +116,31 @@ import Card from '@/components/Card.vue';
 import {mixins} from 'vue-class-component';
 import CardMixin from '@/mixins/CardMixin';
 import {NoteDataType} from '@/typs';
+import BottomFunc from '@/components/BottomFunc.vue';
 
 
 @Component({
-  components: {Card}
+  components: {BottomFunc, Card}
 })
 export default class NoteCard extends mixins(CardMixin) {
   @Prop(String) backgroundColor: string | undefined;
   @Prop(String) className: string | undefined;
 
-  @PropSync('noteData', {type: Object}) syncedNoteData!: object;
+  @PropSync('noteData', {type: Object}) syncedNoteData!: NoteDataType;
   // @Prop(Object) noteData: object | undefined;
   @Prop(Array) selectedTags: [] | undefined;
   pickedTags: [] = [];
-  noteData!: NoteDataType;
-  isTop: boolean = this.noteData.isTop;
+  isTop: boolean = false;
 
+    mounted(){
+      this.isTop = this.syncedNoteData.isTop
+      this.$refs.modal.$el.childNodes[0].style.overflow='visible'
+    }
 
-  mounted(){
-    this.$refs.modal.$el.childNodes[0].style.overflow='visible'
-  }
-
-  topBtn(e) {
+  topBtn() {
     this.isTop = !this.isTop;
     this.syncedNoteData.isTop = this.isTop;
-    this.changeView(this.noteData.id);
+    this.changeView(this.syncedNoteData.id);
 
   }
 
@@ -196,24 +150,29 @@ export default class NoteCard extends mixins(CardMixin) {
   }
 
   selectTag(tag: any) {
-    let i = this.noteData.Tags.findIndex((v: { id: number }) => v.id === tag.id);
+    let i = this.syncedNoteData.Tags.findIndex((v: { id: number }) => v.id === tag.id);
     if (i !== -1) {
       this.syncedNoteData.Tags.splice(i, 1);
-      this.axios.delete(`/labels/${this.noteData.id}/tag/${tag.id}`).then(res => {
+      this.axios.delete(`/labels/${this.syncedNoteData.id}/tag/${tag.id}`).then(res => {
 
       });
     } else {
       //todo ?
       //@ts-ignore
       this.syncedNoteData.Tags.push(tag);
-      this.axios.post(`/labels/${this.noteData.id}`, {tagId: tag.id}).then(res => {
+      this.axios.post(`/labels/${this.syncedNoteData.id}`, {tagId: tag.id}).then(res => {
       });
     }
   }
 
   @Emit('deleteNote')
   deleteNote() {
-    return this.noteData;
+    return this.syncedNoteData;
+  }
+
+  @Emit('restoreNote')
+  restoreNote(){
+      return this.syncedNoteData;
   }
 
   @Emit('pickColor')
@@ -228,7 +187,7 @@ export default class NoteCard extends mixins(CardMixin) {
 
   showContent(e:Event){
     this.$refs.modal.open()
-    this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${this.noteData.color}`
+    this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${this.syncedNoteData.color}`
   }
 
 }
@@ -399,7 +358,6 @@ export default class NoteCard extends mixins(CardMixin) {
       }
     }
   }
-
 
   &:hover {
     box-shadow: 0 0 6px rgba($defaultFontColor, .4);
