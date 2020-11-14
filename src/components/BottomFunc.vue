@@ -79,13 +79,13 @@ export default class BottomFunc extends mixins(ModalMixinBottomFunc) {
   @Prop() note!:NoteDataType;
 
   @Emit('selectColor')
-  pickColor(e) {
+  pickColor(e:string) {
     // this.modal.$el.childNodes[0].style.backgroundColor = `${e}`
-    this.SyncWaterFall()
+    // this.SyncWaterFall()
     return e;
   }
   @Emit('colorValue')
-  colorValue(e){
+  colorValue(e:string){
     return e
   }
 
@@ -93,7 +93,7 @@ export default class BottomFunc extends mixins(ModalMixinBottomFunc) {
     console.log('2333');
   }
 
-  setColor(color){
+  setColor(color:string){
       this.note.color = color;
       this.axios.patch(`/labels/${this.note.id}`, {color: color}).then(res => {
         if (res.data.stateCode === 0) {
@@ -180,7 +180,7 @@ export default class BottomFunc extends mixins(ModalMixinBottomFunc) {
               abc:()=>{
                 this.axios.post(`/labels/restore/${noteData.id}`).then(res=>{
                   this.SyncWaterFall('restore')
-                  this.$toast.success(res.data.res,{position:"bottom-left"})
+                  this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
                 })
               }
             }

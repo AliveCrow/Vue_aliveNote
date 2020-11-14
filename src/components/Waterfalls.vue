@@ -81,10 +81,10 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
     isTop: false,
     Tags: []
   };
-  reRender(e) {
+  reRender(e:any) {
     let type = e[0]
     let id = e[1]
-    let itemIndex = this.asyncListArr.findIndex((item: { id: number }) => item.id === id)
+    let itemIndex = this.asyncListArr.findIndex((item) => item.id === id)
     if (type === 'setColor') {
       return;
     }else if(type === 'restoreArchive' || type === 'restore'){

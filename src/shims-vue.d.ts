@@ -9,3 +9,4 @@ declare module 'vue-eva-icons';
 declare module 'vueisotope';
 declare module 'vue-at';
 declare module "sweet-modal-vue/src/plugin.js";
+declare module "@nuxt/types"

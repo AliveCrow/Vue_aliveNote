@@ -44,7 +44,7 @@ Vue.use(Toast, {
   closeButton: "button",
   icon: true,
   rtl: false,
-  filterBeforeCreate: (toast, toasts) => {
+  filterBeforeCreate: (toast: { type: any }, toasts: { filter: (arg0: (t: { type: any }) => boolean) => { (): any; new(): any; length: number } }) => {
     if (toasts.filter(
         (t: { type: any }) => t.type === toast.type
     ).length !== 0) {

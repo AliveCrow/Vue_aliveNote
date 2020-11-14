@@ -39,7 +39,7 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 export default class TagsManage extends Vue {
-  tagsList: [] = [];
+  tagsList: [{name:string;id:number}] = [{name:'',id:-1}];
   tagData: {id:number|undefined} = {id:undefined};
   tagName: string = '';
   iconType: String = '';
@@ -54,6 +54,13 @@ export default class TagsManage extends Vue {
   }
   created() {
     this.init();
+  }
+
+  $refs!:{
+    tag:any
+    modal:any;
+    input:HTMLInputElement;
+    nestedChild:any;
   }
   mounted() {
     console.log(this.$refs.tag.$el.firstChild.classList.add('not_scroll'));
@@ -93,7 +100,7 @@ export default class TagsManage extends Vue {
 
   saveEdit(){
       this.axios.patch(`/tags/${this.tagData.id}`,{name:(this.$refs.input.value).trim()}).then(res=>{
-        let tagIndex = this.tagsList.findIndex(item=>item.id===this.tagData.id)
+        let tagIndex = this.tagsList.findIndex(item=> item.id===this.tagData.id)
         this.tagsList[tagIndex].name = res.data.res.name
       }).catch(error=>{
         // console.log(error);

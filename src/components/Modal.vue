@@ -53,7 +53,14 @@ export default class Modal extends Mixins(ModalMixinBottomFunc) {
     this.modelRef();
     //
   }
-  setBgc(color){
+
+  public $refs!:{
+    title:HTMLElement;
+    input_2:HTMLElement;
+    modal: any;
+
+  }
+  setBgc(color:string){
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${color}`
   }
 

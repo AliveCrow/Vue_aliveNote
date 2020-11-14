@@ -34,6 +34,7 @@ import Waterfalls from '@/components/Waterfalls.vue';
 import {NoteDataType} from '@/typs';
 import ModalUpdateContent from '@/mixins/ModalUpdateContent';
 import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
+import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 
 const notesStore = namespace('notesStore');
 
@@ -65,10 +66,10 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
 
 
   init() {
-    this.getNotes().then(result => {
+    this.getNotes().then((result:any) => {
       this.allList = result.res;
-      this.topList = this.allList.filter((item: { isTop: boolean; }) => item.isTop && item.archiveId === null);
-      this.list = this.allList.filter((item: { isTop: boolean; }) => !item.isTop && item.archiveId === null);
+      this.topList = this.allList.filter((item: { isTop: boolean |null;archiveId:number|null }) => item.isTop && item.archiveId === null);
+      this.list = this.allList.filter((item: { isTop: boolean  |null;archiveId:number|null }) => !item.isTop && item.archiveId === null);
     });
   }
 
@@ -77,18 +78,18 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     this.init();
   }
 
-  updateList(e) {
+  updateList(e:any) {
     this.axios.post(`/labels`, e).then(res => {
       if (res.data.stateCode === 0) {
         this.$toast.success('添加成功', {
           position: 'bottom-left'
-        });
+        } as CommonOptions);
         this.init();
       }
     });
   }
 
-  changeNote(note:NoteCard){
+  changeNote(note:NoteDataType){
     if(!note.isTop){
       this.list.push(note)
     }else {

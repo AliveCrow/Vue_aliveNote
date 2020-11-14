@@ -10,6 +10,7 @@ import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 
 @Component
 export default class ModalMixinBottomFunc extends Vue {
+
     colorArr: string[] = [
         '#fff', '#99b898', '#feceab', '#ff847c', '#e84a5f',
         '#de7119', '#dee3e2', '#116979', '#18b0b0',
@@ -56,7 +57,7 @@ export default class ModalMixinBottomFunc extends Vue {
     };
 
     @Emit('dataChange')
-    dataChange(e,id:number){
+    dataChange(e:string,id:number){
         return arguments
     }
 

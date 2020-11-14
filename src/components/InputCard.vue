@@ -79,6 +79,7 @@ import Card from '@/components/Card.vue';
 import ArchiveTip from '@/components/ArchiveTip.vue';
 import HomeMixin from '@/mixins/HomeMixin';
 import CardMixin from '@/mixins/CardMixin';
+import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 
 @Component({
   components: {Card}
@@ -86,14 +87,14 @@ import CardMixin from '@/mixins/CardMixin';
 export default class InputCard extends Mixins(HomeMixin, CardMixin) {
   @PropSync('isShow', {type: Boolean}) show!: boolean;
   selectedTags: [] = [];
-  selected: number = null;
+  selected: number |null = null;
   html:string = ''
   // @Emit('open')
   open() {
     this.show = true;
   }
 
-  selectTag(tag) {
+  selectTag(tag:never) {
     let i = this.selectedTags.indexOf(tag);
     if (i !== -1) {
       this.selectedTags.splice(i, 1);
@@ -101,13 +102,20 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
       this.selectedTags.push(tag);
     }
   }
+  public $refs!:{
+    box__right_input:HTMLElement;
+    input_title:HTMLInputElement;
+    input_2:HTMLElement;
+  }
 
+  selectedColor:string |undefined;
   selectColor(item: string) {
     this.$refs.box__right_input.style.backgroundColor = item;
     this.$refs.input_title.style.backgroundColor = item;
     this.selectedColor = item;
   }
 
+  isTop:boolean|undefined;
   reset() {
     this.$refs.box__right_input.style.backgroundColor = '#fff';
     this.$refs.input_title.style.backgroundColor = '#fff';
@@ -154,7 +162,7 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
         if (res.data.stateCode === 0) {
           this.$toast.success(ArchiveTip, {
             position: 'bottom-left'
-          });
+          } as CommonOptions);
           this.reset();
         }
       });

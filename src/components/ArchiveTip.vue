@@ -13,7 +13,7 @@ import ContainerBoxRight from '@/components/Home/ContainerBoxRight.vue';
 
 @Component
 export default class ArchiveTip extends Mixins(ModalMixinBottomFunc) {
-  @Prop(String) content: string;
+  @Prop(String) content: string | undefined;
 
 
   @Emit('abc')

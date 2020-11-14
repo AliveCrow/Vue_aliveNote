@@ -110,7 +110,7 @@ export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
 
 
   @Emit('changeView')
-  changeView(e) {
+  changeView(e:number) {
     return e;
   }
   @Emit('getData')
