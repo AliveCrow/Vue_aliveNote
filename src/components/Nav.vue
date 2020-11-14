@@ -22,8 +22,8 @@
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
       <!--        <div class="my_app"></div>-->
-      <div class="avatar" v-on-clickaway="closeCard" @click="showCard">
-          <img :src="user.avatar" alt="头像" height="100%" >
+      <div class="avatar" v-on-clickaway="closeCard" @click="showCard" >
+          <img :src="user.avatar" alt="头像"  class="nav_avatar"  height="45px" >
         <Card  className="userInfo_card" :isShow="cardShow" animationName="fade" >
           <template v-slot:title >
             <img :src="user.avatar" alt="" class="header_avatar">
@@ -31,7 +31,7 @@
           <template v-slot:content >
             <p class="userInfo_card__nickname userInfo_card_manage">{{ user.nickname }}</p>
             <p class="userInfo_card__username userInfo_card_manage">{{user.username}}</p>
-            <button class="userInfo_card_manage userInfo_card_manage__btn g_border">管理账号信息</button>
+            <button class="userInfo_card_manage userInfo_card_manage__btn g_border" @click="getUser">管理账号信息</button>
             <div class="userInfo_card_manage not_complete">
               暂未开放
             </div>
@@ -74,8 +74,8 @@ export default class Nav extends Vue {
     this.slideShow = false
   }
   @Emit('getUser')
-  getUser(userData: user) {
-    return userData;
+  getUser() {
+    return this.user;
   }
 
   showCard(){
@@ -85,7 +85,7 @@ export default class Nav extends Vue {
     this.cardShow = false
   }
 
-
+  userData:user|undefined;
   created() {
     this.axios.get('/users').then(res => {
       this.$nextTick(() => {
@@ -96,7 +96,6 @@ export default class Nav extends Vue {
           avatar: res.data.userInfo.avatar,
           email: res.data.userInfo.email
         };
-        this.getUser(this.user);
       });
     }).catch(error=>{
       console.log(error);
@@ -125,6 +124,10 @@ export default class Nav extends Vue {
 @import "src/assets/scss/var";
 
 #Nav_app {
+  img{
+    object-fit: cover;
+  }
+
   height: 64px;
   width: 100%;
   display: flex;
@@ -269,6 +272,10 @@ export default class Nav extends Vue {
       background-color: $info;
       border-radius: 50%;
       overflow: hidden;
+      .nav_avatar{
+        width: 45px;
+        object-fit: cover;
+      }
     }
 
     .userInfo_card{

@@ -58,6 +58,8 @@ _axios.interceptors.response.use((response) => {
             status?:number,
             msg:string,
         }
+        console.log(error.response);return
+
         let err = JSON.parse(JSON.stringify(error.response))
         switch (err.status) {
             case 404:
