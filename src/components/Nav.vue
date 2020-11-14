@@ -18,7 +18,7 @@
       <eva-icon name="close-outline" fill="#000" class="search-input__close icons"></eva-icon>
     </label>
     <div class="nav-right">
-      <eva-icon name="refresh-outline" fill="#000" class="nav__refresh nav-right__common icons"></eva-icon>
+      <eva-icon name="refresh-outline" fill="#000" class="nav__refresh nav-right__common icons" @click="refresh"></eva-icon>
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
       <!--        <div class="my_app"></div>-->
@@ -84,7 +84,9 @@ export default class Nav extends Vue {
   closeCard(){
     this.cardShow = false
   }
-
+  refresh(){
+    this.$router.push('/transit')
+  }
   userData:user|undefined;
   created() {
     this.axios.get('/users').then(res => {
