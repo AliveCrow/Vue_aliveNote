@@ -95,7 +95,7 @@ export default class Nav extends Vue {
           id: res.data.userInfo.id,
           username: res.data.userInfo.username,
           nickname: res.data.userInfo.nickname,
-          avatar: res.data.userInfo.avatar,
+          avatar: res.data.userInfo.avatar+`?${Math.random()*314}`,
           email: res.data.userInfo.email
         };
       });
@@ -271,7 +271,6 @@ export default class Nav extends Vue {
     .avatar {
       height: 45px;
       width: 45px;
-      background-color: $info;
       border-radius: 50%;
       overflow: hidden;
       .nav_avatar{

@@ -52,6 +52,7 @@ import {Component, Inject, Provide, Vue, Watch} from 'vue-property-decorator';
 import ContainerBoxLeft from '@/components/Home/ContainerBoxLeft.vue';
 import {user} from '@/typs';
 import Nav from '@/components/Nav.vue';
+import {mapGetters} from 'vuex';
 
 @Component({
   components: {Nav, ContainerBoxLeft}
@@ -68,7 +69,7 @@ export default class Home extends Vue {
   slideShow: boolean = false;
   routeId!: number;
 
-  formData: any = new FormData();
+  formData: any | undefined ;
 
   handleFiles() {
     let uploadFile = this.$refs.uploadImg.files[0];
@@ -78,23 +79,22 @@ export default class Home extends Vue {
       this.$toast.error('图片大小不能超过3MB');
       return;
     }
-    this.user.avatar = URL.createObjectURL(uploadFile);
-    if (number < 1024) {
-      number = number + 'bytes';
-    } else if (number >= 1024 && number < 1048576) {
-      number = (number / 1024).toFixed(1) + 'KB';
-    } else if (number >= 1048576) {
-      number = (number / 1048576).toFixed(1) + 'MB';
-    }
-    // console.log(uploadFile,number); //文件
+    this.user.avatar = URL.createObjectURL(uploadFile); //缩略图
+    // if (number < 1024) {
+    //   number = number + 'bytes';
+    // } else if (number >= 1024 && number < 1048576) {
+    //   number = (number / 1024).toFixed(1) + 'KB';
+    // } else if (number >= 1048576) {
+    //   number = (number / 1048576).toFixed(1) + 'MB';
+    // }
+    this.formData = new FormData()
     this.formData.append('img', uploadFile);
-
   }
 
   submit() {
     this.axios.post('/avatarUpload', this.formData).then(res => {
-      if (res.data.stateCode === 0) {
-        this.user.avatar = 'http://qiniu.dreamsakula.top/' + res.data.respBody.key;
+      if (res.data.statusCode === 0) {
+        this.user.avatar = 'http://qiniu.dreamsakula.top/' + res.data.respBody.key +`?${Math.random()*314}`;
       }
       this.axios.patch('/users', this.user).then(res => {
         this.$refs.submited.open();
