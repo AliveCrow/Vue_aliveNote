@@ -27,5 +27,8 @@ export default class Archive extends Vue {
 }
 </script>
 <style scoped lang='scss'>
+#Archive_app{
+  padding-top: 50px;
+}
 
 </style>

@@ -94,6 +94,10 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/components/test.vue')
     },
     {
+      path:'/transit',
+        component: () => import('@/components/Transit.vue')
+    },
+    {
         path:'*',
         name:'NotFound',
         component:()=>import('@/views/NotFound.vue')
@@ -105,6 +109,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    Vue.$toast.clear()
     if (to.meta.requireAuth) {
         if (localStorage.getItem('jwt_token')) {
             next();

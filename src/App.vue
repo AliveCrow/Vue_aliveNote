@@ -18,6 +18,21 @@
 }
 
 body, html {
+  position: relative;
+  &::-webkit-scrollbar{
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track{
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: $defaultBorderColor;
+    border-radius: 3px;
+    &:hover{
+      background-color: $info;
+    }
+  }
+
 }
 
 li{
@@ -37,7 +52,7 @@ a {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #202124;
-
+  height: 100vh;
 }
 
 #nav {
@@ -77,6 +92,11 @@ a {
   text-align: left;
   width: 100%;
   display: inline-block;
+}
+.sweet-modal.is-visible {
+  &::-webkit-scrollbar{
+    width: 0!important;
+  }
 }
 
 </style>

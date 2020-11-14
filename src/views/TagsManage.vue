@@ -28,6 +28,9 @@
         <button class="editButton" @click="deleteTag">删除标签</button>
       </template>
     </sweet-modal>
+    <sweet-modal ref="nestedChild"  icon="success">
+      删除成功
+    </sweet-modal>
   </div>
 </template>
 
@@ -53,6 +56,7 @@ export default class TagsManage extends Vue {
     this.init();
   }
   mounted() {
+    console.log(this.$refs.tag.$el.firstChild.classList.add('not_scroll'));
   }
   addTag() {
     if (this.tagName === '') {
@@ -103,7 +107,7 @@ export default class TagsManage extends Vue {
         this.iconType = 'success';
         this.content = '删除成功';
         this.$refs.tag.close();
-        this.$refs.modal.open();
+        this.$refs.nestedChild.open();
       }).catch(error=>{
         console.log(error);
       })
@@ -112,6 +116,7 @@ export default class TagsManage extends Vue {
 </script>
 <style scoped lang='scss'>
 @import "src/assets/scss/var";
+
 
 .fade-item {
   transition: all 100ms linear;
@@ -176,6 +181,7 @@ export default class TagsManage extends Vue {
   }
 
   .tag_box {
+    padding-top: 10px;
     display: flex;
     flex-wrap: wrap;
 

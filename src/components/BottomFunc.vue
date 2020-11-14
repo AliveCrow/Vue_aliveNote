@@ -14,13 +14,13 @@
             <li :style="{'background-color': item}"
                 v-for="(item,index) in colorArr"
                 :key="index"
-                @click="pickColor(item)"
+                @click="setColor(item)"
             ></li>
           </ul>
         </template>
       </Card>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/archive' || $route.fullPath==='/notes'"  @click="setArchive">
+    <blockquote v-show="$route.fullPath==='/archive' || $route.fullPath==='/notes'"  @click="setArchive(note)">
       <eva-icon name="archive-outline"
                 class="icons"
                 height="18px"
@@ -41,7 +41,7 @@
             <!--                    最多27个-->
             <li v-for="(item,index) in allTags" :key="item.id" @click="selectTag(item)">
               <eva-icon name="square-outline" style="line-height: 12px" height="18px"
-                        v-if="syncedNoteData.Tags.findIndex(tag=>tag.id===item.id)===-1"></eva-icon>
+                        v-if="note.Tags.findIndex(tag=>tag.id===item.id)===-1"></eva-icon>
               <eva-icon name="checkmark-square-2-outline" style="line-height: 12px" height="18px"
                         v-else></eva-icon>
               <p>{{ item.name }}</p>
@@ -50,13 +50,12 @@
         </template>
       </Card>
     </blockquote>
-
-    <blockquote v-show="$route.fullPath==='/rec'"  @click="restoreNote">
+    <blockquote v-show="$route.fullPath==='/rec'"  @click="restoreNote(note)">
       <eva-icon name="minus-circle" class="icons" height="18px" width="18px"
                 data-name="还原"
       ></eva-icon>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/rec' || $route.fullPath==='/notes'"  @click="deleteNote">
+    <blockquote v-show="$route.fullPath==='/rec' || $route.fullPath==='/notes'"  @click="deleteNote(note)">
       <eva-icon name="trash-2-outline" class="icons" height="18px" width="18px"
                 :data-name="[$route.fullPath==='/rec'?'彻底删除':'删除']"
       ></eva-icon>
@@ -65,100 +64,186 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Vue} from 'vue-property-decorator';
+import {Component, Emit, Mixins, Prop, Vue} from 'vue-property-decorator';
 import Card from '@/components/Card.vue';
 import {NoteDataType} from '@/typs';
+import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
+import ArchiveTip from '@/components/ArchiveTip.vue';
+import {CommonOptions} from 'vue-toastification/dist/types/src/types';
+import {mixins} from 'vue-class-component';
 @Component({
   components: {Card}
 })
-export default class BottomFunc extends Vue {
+export default class BottomFunc extends mixins(ModalMixinBottomFunc) {
   @Prop() modal?:any;
-  @Prop(Array) allTags:[]|undefined;
-  @Prop() syncedNoteData!:NoteDataType;
+  @Prop() note!:NoteDataType;
 
-  //
-  cardShow: boolean = false;
-  colorArr: string[] = [
-    '#fff', '#99b898', '#feceab', '#ff847c', '#e84a5f',
-    '#de7119', '#dee3e2', '#116979', '#18b0b0',
-    '#8fcfd1', '#df5e88', '#f6ab6c'
-  ];
-
-  //tagCard
-  cardTagShow: boolean = false;
-
-
-  created(){
-  }
-
-  //Card
-  closeCard(){
-    this.cardShow = false;
-  }
-  showCard(){
-    this.cardShow = !this.cardShow;
-  }
-  @Emit('pickColor')
+  @Emit('selectColor')
   pickColor(e) {
-    this.modal.$el.childNodes[0].style.backgroundColor = `${e}`
+    // this.modal.$el.childNodes[0].style.backgroundColor = `${e}`
+    this.SyncWaterFall()
     return e;
   }
-
-  //Archive
-  @Emit()
-  setArchive() {
+  @Emit('colorValue')
+  colorValue(e){
+    return e
   }
 
-  //TagCard
-  closeTagCard(){
-    this.cardTagShow = false;
+  test(){
+    console.log('2333');
   }
-  showTagCard(){
-    this.cardTagShow = !this.cardTagShow;
+
+  setColor(color){
+      this.note.color = color;
+      this.axios.patch(`/labels/${this.note.id}`, {color: color}).then(res => {
+        if (res.data.stateCode === 0) {
+          this.$toast.success('更改成功', {
+            timeout: 1000
+          });
+        } else {
+          this.$toast.error('更改失败', {
+            timeout: 1000
+          });
+        }
+      }).catch(error => {
+        //接口错误
+        this.$toast.error('更改失败', {
+          timeout: 1000
+        });
+      });
+      this.SyncWaterFall('setColor')
+      this.colorValue(color)
+  }
+  setArchive(noteData: NoteDataType) {
+    if (noteData.archiveId) {
+      noteData.archiveId = null;
+    } else {
+      noteData.archiveId = noteData.userId;
+    }
+    noteData.isTop = false;
+    this.axios.patch(`/labels/${noteData.id}`, {isTop: noteData.isTop, archiveId: noteData.archiveId}).then(res => {
+      if (res.data.stateCode === 0) {
+        if(this.$route.fullPath!=='/archive'){
+          this.$toast.info({
+            component:ArchiveTip,
+            props:{
+              content: "已将归档"
+            },
+            listeners:{
+              // click:()=>{}
+              abc:()=>{
+                this.axios.patch(`/labels/${noteData.id}`, { archiveId: null}).then(res=>{
+                  this.$toast.success('已恢复',{position:"bottom-left"} as CommonOptions)
+                  this.SyncWaterFall('restoreArchive')
+                })
+              }
+            }
+          }, {
+            position: 'bottom-left'
+          } as CommonOptions);
+        }else {
+          this.$toast.success("恢复成功", {
+            position: 'bottom-left'
+          } as CommonOptions);
+        }
+      } else {
+        this.$toast.error('更改失败', {
+          timeout: 1000
+        });
+      }
+    }).catch(error => {
+      this.$toast.error('更改失败', {
+        timeout: 1000
+      });
+    });
+    this.SyncWaterFall('setArchive')
+  }
+  deleteNote(noteData: NoteDataType) {
+    if (this.$route.fullPath === '/rec') {
+      //彻底删除
+      this.axios.delete(`/labels/delete/${noteData.id}`).then(res=>{
+        this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
+      }).catch(error=>{
+        this.$toast.error('请求错误')
+      })
+    } else if (this.$route.fullPath === '/notes') {
+      //软删除
+      this.axios.delete(`/labels/${noteData.id}`).then(res => {
+        if (res.data.stateCode === 0) {
+          this.$toast.warning({
+            component:ArchiveTip,
+            props:{
+              content: "已将note放入回收站"
+            },
+            listeners:{
+              // click:()=>{}
+              abc:()=>{
+                this.axios.post(`/labels/restore/${noteData.id}`).then(res=>{
+                  this.SyncWaterFall('restore')
+                  this.$toast.success(res.data.res,{position:"bottom-left"})
+                })
+              }
+            }
+          }, {
+            position: 'bottom-left'
+          } as CommonOptions)
+
+          return;
+        } else if (res.data.stateCode === -1) {
+          this.$toast.error(res.data.msg, {
+            timeout: 1000
+          });
+        }
+      }).catch(error => {
+        //接口错误
+        this.$toast.error('请求错误,删除失败', {
+          timeout: 1000
+        });
+      });
+    }
+    this.SyncWaterFall('deleteNote')
+  }
+  restoreNote(noteData:NoteDataType){
+    this.axios.post(`/labels/restore/${noteData.id}`).then(res=>{
+      this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
+    }).catch(error=>{
+      this.$toast.error('请求错误')
+    })
+    this.SyncWaterFall('restoreNote')
   }
   selectTag(tag: any) {
-    let i = this.syncedNoteData.Tags.findIndex((v: { id: number }) => v.id === tag.id);
+    let i = this.note.Tags.findIndex((v: { id: number }) => v.id === tag.id);
     if (i !== -1) {
-      this.syncedNoteData.Tags.splice(i, 1);
-      this.axios.delete(`/labels/${this.syncedNoteData.id}/tag/${tag.id}`).then(res => {
+      this.note.Tags.splice(i, 1);
+      this.axios.delete(`/labels/${this.note.id}/tag/${tag.id}`).then(res => {
 
       });
     } else {
       //todo ?
       //@ts-ignore
-      this.syncedNoteData.Tags.push(tag);
-      this.axios.post(`/labels/${this.syncedNoteData.id}`, {tagId: tag.id}).then(res => {
+      this.note.Tags.push(tag);
+      this.axios.post(`/labels/${this.note.id}`, {tagId: tag.id}).then(res => {
       });
     }
-  }
-
-  //delete
-  @Emit('deleteNote')
-  deleteNote() {
-    return this.syncedNoteData;
-  }
-
-  @Emit('restoreNote')
-  restoreNote(){
-      return this.syncedNoteData
   }
 
 }
 </script>
 <style scoped lang='scss'>
 @import "src/assets/scss/var";
+
+
 .bottom_fun {
   width: 100%;
   display: flex;
   position: absolute;
   bottom: 0;
-  opacity: 1;
+  opacity: 0;
   transition: inherit;
-
   .tagSelect {
     max-height: 200px;
-    top: -90px !important;
-    left: 50px;
+    top: 55px !important;
+    left: 0px;
 
     .tags_box {
       display: flex;
@@ -190,8 +275,8 @@ export default class BottomFunc extends Vue {
 
   .colorSelect {
     box-shadow: none !important;
-    top: -100px !important;
-    left: 0;
+    top: 55px !important;
+    left: -100px;
 
     .color_box {
       display: flex;
@@ -251,5 +336,7 @@ export default class BottomFunc extends Vue {
     }
   }
 }
+
+
 
 </style>

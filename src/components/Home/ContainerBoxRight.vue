@@ -3,15 +3,16 @@
     <InputCard :isShow.sync="isShow" v-on-clickaway="close" @submit="updateList"/>
     <div class="magic_box">
       <div class="top_note list">
-        <div style="text-align: left" @click="showModal">置顶的notes</div>
-        <Waterfalls :is-top="true" :list-arr="topList" @asyncListArr="changeNote"></Waterfalls>
+        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" >置顶的notes</div>
+        <Waterfalls @update:isTop="true" :list-arr="topList" @asyncListArr="changeNote" ></Waterfalls>
       </div>
       <div class="list">
-        <div style="text-align: left">notes</div>
-        <Waterfalls :is-top="false" :list-arr="list" @asyncListArr="changeNote"></Waterfalls>
+        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px">notes</div>
+        <Waterfalls @update:isTop="false" :list-arr="list" @asyncListArr="changeNote" ></Waterfalls>
       </div>
     </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -53,9 +54,6 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     this.isShow = false;
   }
 
-  showModal() {
-    this.$modal.show('my-first-modal');
-  }
 
   init() {
     this.getNotes().then(result => {
@@ -89,6 +87,7 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     }
 
   }
+
 
 }
 </script>

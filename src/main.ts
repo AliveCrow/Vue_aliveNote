@@ -33,7 +33,7 @@ Vue.use(Toast, {
   maxToasts: 20,
   newestOnTop: true,
   position: "top-center",
-  timeout: 3000,
+  timeout: 1000,
   closeOnClick: true,
   pauseOnFocusLoss: false,
   pauseOnHover: true,
@@ -43,7 +43,17 @@ Vue.use(Toast, {
   hideProgressBar: false,
   closeButton: "button",
   icon: true,
-  rtl: false
+  rtl: false,
+  filterBeforeCreate: (toast, toasts) => {
+    if (toasts.filter(
+        (t: { type: any }) => t.type === toast.type
+    ).length !== 0) {
+      // Returning false discards the toast
+      return false;
+    }
+    // You can modify the toast if you want
+    return toast;
+  }
 });
 
 Vue.component('NoteCard',NoteCard)

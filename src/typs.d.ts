@@ -22,6 +22,8 @@ interface user {
 }
 interface  NoteDataType {
     id:number;
+    title:string;
+    content:string;
     color:string;
     archiveId:number|null;
     userId:number;

@@ -1,15 +1,25 @@
 <template>
   <div id='ArchiveTip_app'>
-    <span>已将记事归档</span>
-    <button>撤销</button>
+    <span>{{content}}</span>
+    <button  @click="abc">撤销</button>
   </div>
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Emit, Mixins, Prop, Vue} from 'vue-property-decorator';
+import {NoteDataType} from '@/typs';
+import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
+import ContainerBoxRight from '@/components/Home/ContainerBoxRight.vue';
 
 @Component
-export default class ArchiveTip extends Vue {
+export default class ArchiveTip extends Mixins(ModalMixinBottomFunc) {
+  @Prop(String) content: string;
+
+
+  @Emit('abc')
+  abc(){
+  }
+
 
 }
 </script>
@@ -28,7 +38,7 @@ export default class ArchiveTip extends Vue {
     color: #fff;
     padding: 8px 0;
     &:hover {
-      background-color: rgba(25, 97, 202, .7);
+      background-color: rgba(#000, .1);
     }
   }
 }

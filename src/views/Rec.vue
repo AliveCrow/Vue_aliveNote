@@ -2,8 +2,6 @@
   <div id='Rec_app'>
     <Waterfalls
         :list-arr="recList"
-        @restoreNote="restoreNote"
-        @deleteNote="deleteNote"
     ></Waterfalls>
   </div>
 </template>
@@ -28,28 +26,30 @@ export default class Rec extends Vue {
   created(){
     this.init()
   }
-
-  restoreNote(e){
-    this.axios.post(`/labels/restore/${e.id}`).then(res=>{
-      this.recList.splice(this.recList.findIndex(item=>item.id===e.id),1)
-      this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
-    }).catch(error=>{
-      this.$toast.error('请求错误')
-    })
-  }
-
-  deleteNote(e){
-    this.axios.delete(`/labels/delete/${e.id}`).then(res=>{
-      this.recList.splice(this.recList.findIndex(item=>item.id===e.id),1)
-      this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
-    }).catch(error=>{
-      this.$toast.error('请求错误')
-    })
-  }
+  //
+  // restoreNote(e){
+  //   this.axios.post(`/labels/restore/${e.id}`).then(res=>{
+  //     this.recList.splice(this.recList.findIndex(item=>item.id===e.id),1)
+  //     this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
+  //   }).catch(error=>{
+  //     this.$toast.error('请求错误')
+  //   })
+  // }
+  //
+  // deleteNote(e){
+  //   this.axios.delete(`/labels/delete/${e.id}`).then(res=>{
+  //     this.recList.splice(this.recList.findIndex(item=>item.id===e.id),1)
+  //     this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
+  //   }).catch(error=>{
+  //     this.$toast.error('请求错误')
+  //   })
+  // }
 
 
 }
 </script>
 <style scoped lang='scss'>
-
+#Rec_app{
+  padding-top: 50px;
+}
 </style>
