@@ -4,7 +4,7 @@
       <NoteCard v-for="element in asyncListArr" :key="element.id"
                 :backgroundColor="element.color"
                 :noteData="element"
-                @dataChange="reRender($event,element)"
+                @dataChange="reRender"
                 @changeView="changeView($event,element)"
                 @getData="getData"
       >
@@ -82,7 +82,6 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
     Tags: []
   };
   reRender(e) {
-    this.modal.close();
     let type = e[0]
     let id = e[1]
     let itemIndex = this.asyncListArr.findIndex((item: { id: number }) => item.id === id)

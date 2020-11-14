@@ -58,22 +58,18 @@ export default class Modal extends Mixins(ModalMixinBottomFunc) {
   }
 
   saveNote() {
-    if(this.note.content===this.$refs.input_2.innerHTML){
-        return
-    }else{
-      this.note.title = this.$refs.title.innerHTML;
-      this.note.content = this.$refs.input_2.innerHTML;
-      this.$nextTick(() => {
-        this.axios.patch(`labels/${this.note.id}`, {
-          title: this.$refs.title.innerHTML,
-          content: this.$refs.input_2.innerHTML
-        }).then(res => {
-          this.$router.push('/transit') //重载组件
-        }).catch(error => {
-          this.$toast.error(error.msg);
-        });
+    this.$nextTick(() => {
+      this.axios.patch(`labels/${this.note.id}`, {
+        title: this.$refs.title.innerHTML,
+        content: this.$refs.input_2.innerHTML
+      }).then(res => {
+        this.$router.push('/transit') //重载组件
+        // this.dataChange(this.note.id)
+      }).catch(error => {
+        this.$toast.error(error.msg);
       });
-    }
+    });
+
   }
 
 

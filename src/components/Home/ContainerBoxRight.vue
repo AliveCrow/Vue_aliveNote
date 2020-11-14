@@ -4,11 +4,17 @@
     <div class="magic_box">
       <div class="top_note list">
         <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" >置顶的notes</div>
-        <Waterfalls @update:isTop="true" :list-arr="topList" @asyncListArr="changeNote" ></Waterfalls>
+        <Waterfalls @update:isTop="true"
+                    :listArr="topList"
+                    @asyncListArr="changeNote"
+        ></Waterfalls>
       </div>
       <div class="list">
         <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px">notes</div>
-        <Waterfalls @update:isTop="false" :list-arr="list" @asyncListArr="changeNote" ></Waterfalls>
+        <Waterfalls @update:isTop="false"
+                    :listArr="list"
+                    @asyncListArr="changeNote"
+        ></Waterfalls>
       </div>
     </div>
   </div>
@@ -25,6 +31,9 @@ import HomeMixin from '@/mixins/HomeMixin';
 import updateNoteMixin from '@/mixins/updateNoteMixin';
 import ArchiveTip from '@/components/ArchiveTip.vue';
 import Waterfalls from '@/components/Waterfalls.vue';
+import {NoteDataType} from '@/typs';
+import ModalUpdateContent from '@/mixins/ModalUpdateContent';
+import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 
 const notesStore = namespace('notesStore');
 
@@ -34,8 +43,8 @@ const notesStore = namespace('notesStore');
 export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin) {
   @notesStore.Action('getNotes') getNotes!: Function;
   @notesStore.State('notes') notes: any;
-  list: NoteCard[] = [];
-  topList: NoteCard[] = [];
+  list: NoteDataType[] = [];
+  topList: NoteDataType[] = [];
   allList: [] = [];
   option = {
     getSortData: {
@@ -85,8 +94,8 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
     }else {
       this.topList.push(note)
     }
-
   }
+
 
 
 }
