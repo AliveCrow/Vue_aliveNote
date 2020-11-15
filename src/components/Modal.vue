@@ -3,7 +3,7 @@
     <template v-slot:title>
               <span contenteditable
                     ref="title"
-                    v-html="note.title"
+                    v-html="asyncNote.title"
                     style="padding: 10px;border: none;outline: none"
               >
               </span>
@@ -15,25 +15,25 @@
            style="text-align: left;padding:8px 8px 0 ;border: none;outline: none;letter-spacing:1px;"
            ref="input_2"
            contenteditable
-           v-html="note.content"
+           v-html="asyncNote.content"
       >
       </div>
     </div>
     <div class="showTag" style="flex-wrap: wrap!important;margin-top: 20px">
-      <div class="showTag_foreach" v-for="(item,index) in note.Tags" :key="index">
+      <div class="showTag_foreach" v-for="(item,index) in asyncNote.Tags" :key="index">
         {{ item.name }}
       </div>
     </div>
-    <BottomFunc :note="note" style="opacity: 1;position: relative;margin-bottom: -20px"
+    <BottomFunc :note="asyncNote" style="opacity: 1;position: relative;margin-bottom: -20px"
                 :modal="this.$refs.modal"
-                @updateWaterFall="dataChange($event,note.id)"
+                @updateWaterFall="dataChange($event,asyncNote.id)"
                 @colorValue="setBgc"
     ></BottomFunc>
   </sweet-modal>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Mixins, Prop, Vue, Watch} from 'vue-property-decorator';
+import {Component, Emit, Mixins, Prop, PropSync, Vue, Watch} from 'vue-property-decorator';
 import {NoteDataType} from '@/typs';
 import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 import BottomFunc from '@/components/BottomFunc.vue';
@@ -42,7 +42,7 @@ import BottomFunc from '@/components/BottomFunc.vue';
   components: {BottomFunc}
 })
 export default class Modal extends Mixins(ModalMixinBottomFunc) {
-  @Prop() note!: NoteDataType;
+  @PropSync('note', {type:Object}) asyncNote!: NoteDataType;
 
   @Emit('modalRef')
   modelRef() {
@@ -65,13 +65,16 @@ export default class Modal extends Mixins(ModalMixinBottomFunc) {
   }
 
   saveNote() {
+    if(this.asyncNote.title === this.$refs.title.innerHTML && this.asyncNote.content === this.$refs.input_2.innerHTML){
+      return
+    }
     this.$nextTick(() => {
-      this.axios.patch(`labels/${this.note.id}`, {
+      this.axios.patch(`labels/${this.asyncNote.id}`, {
         title: this.$refs.title.innerHTML,
         content: this.$refs.input_2.innerHTML
       }).then(res => {
         this.$router.push('/transit') //重载组件
-        // this.dataChange(this.note.id)
+        this.asyncNote = res.data.labelInfo
       }).catch(error => {
         this.$toast.error(error.msg);
       });

@@ -4,14 +4,21 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Vue, Watch} from 'vue-property-decorator';
 
 @Component
 export default class Transit extends Vue {
 
   beforeCreate(){
-    this.$router.push('/notes')
+    this.$router.go(-1)
   }
+
+  @Watch('$route')
+  routeChange(to: any, from: any) {
+    console.log('233');
+  }
+
+
 
 }
 </script>

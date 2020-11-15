@@ -32,6 +32,14 @@ export default class ContainerBoxLeft extends Vue {
   @Prop(String) className: string | undefined;
   select:string  = 'notes'
 
+  @Watch('$route')
+  routeChange(to: any, from: any) {
+    let routeLink: string = to.path;
+    if (routeLink === '/notes') {
+      this.select = 'notes'
+    }
+  }
+
   created(){
     let go = this.$route.fullPath.split('/')[1]
     this.routeTo(go)

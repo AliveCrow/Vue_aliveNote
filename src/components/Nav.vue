@@ -12,15 +12,21 @@
       <span>{{ user.nickname }}</span>
     </div>
 
-    <label class="search-input">
-      <eva-icon name="search-outline" fill="#000" class="search_icon icons"></eva-icon>
-      <input type="text" class="search" placeholder="搜索"/>
-      <eva-icon name="close-outline" fill="#000" class="search-input__close icons"></eva-icon>
-    </label>
+    <div class="search-input">
+      <div class="search_icon icons" >
+        <eva-icon name="search-outline" fill="#000" class=" icon" v-show="isShow"></eva-icon>
+      </div>
+      <label >
+        <input type="text" class="search" placeholder="搜索" v-model="asyncKeyWord" @click="pushSearch" />
+      </label>
+      <div class="search-input__close icons"  @click.stop="outSearch">
+        <eva-icon name="close-outline" fill="#000" class=" icon"   v-show="isShow"></eva-icon>
+      </div>
+    </div>
     <div class="nav-right">
       <eva-icon name="refresh-outline" fill="#000" class="nav__refresh nav-right__common icons" @click="refresh"></eva-icon>
       <!--        <div class="re_fresh"></div>-->
-      <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons"></eva-icon>
+      <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons" style="cursor:not-allowed;"></eva-icon>
       <!--        <div class="my_app"></div>-->
       <div class="avatar" v-on-clickaway="closeCard" @click="showCard" >
           <img :src="user.avatar" alt="头像"  class="nav_avatar"  height="45px" >
@@ -40,19 +46,22 @@
         </Card>
       </div>
     </div>
+
   </div>
 </template>
 
 <script lang="ts">
-import {Component, Emit, Inject, Provide, Vue, Watch} from 'vue-property-decorator';
+import {Component, Emit, Inject, PropSync, Provide, Vue, Watch} from 'vue-property-decorator';
 import {State} from 'vuex-class';
 import Card from '@/components/Card.vue';
-import {user} from '@/typs';
+import {NoteDataType, user} from '@/typs';
 import ContainerBoxLeft from '@/components/Home/ContainerBoxLeft.vue';
+import Waterfalls from '@/components/Waterfalls.vue';
 @Component({
-  components: {ContainerBoxLeft, Card}
+  components: {Waterfalls, ContainerBoxLeft, Card}
 })
 export default class Nav extends Vue {
+  isShow:boolean=false;
   user: user = {
     id: 0,
     username: '',
@@ -63,7 +72,6 @@ export default class Nav extends Vue {
   isSHow: boolean = false;
   cardShow:boolean= false;
   slideShow:boolean = false;
-
 
   @State('userInfo', {namespace: 'userInfo'}) userInfo!:user;
 
@@ -102,22 +110,32 @@ export default class Nav extends Vue {
     }).catch(error=>{
       console.log(error);
     });
-    // this.$nextTick(()=>{
-    //   if(userId){
-    //
-    //   }else {
-    //     this.$toast.error('用户信息消失,请重新登录')
-    //     setTimeout(()=>this.$router.push('/login'),2500)
-    //   }
-    // })
   }
   exit(){
     localStorage.removeItem('jwt_token')
     this.$router.push('login')
   }
-  setUserInfo() {
 
+  @PropSync('keyword',{type:String}) asyncKeyWord:string|''
+
+
+
+  formRouter:string = '';
+  pushSearch(){
+    this.isShow = true
+    if(this.$route.fullPath==='/search'){
+      return
+    }else {
+      this.$router.push('/search')
+    }
   }
+  outSearch(){
+    this.isShow = false
+    this.$router.push('/notes')
+    this.asyncKeyWord = ''
+  }
+
+
 
 
 }

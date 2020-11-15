@@ -46,7 +46,16 @@ const routes: Array<RouteConfig> = [
                     requireAuth: true
                 },
                 component:() => import('@/views/Rec.vue')
-            }
+            },
+            {
+                path:'/search',
+                name:'Search',
+                component: () => import('@/views/Search.vue')
+            },
+            {
+                path:'/transit',
+                component: () => import('@/components/Transit.vue')
+            },
         ]
     },
     {
@@ -92,10 +101,6 @@ const routes: Array<RouteConfig> = [
         path: '/test',
         name: 'TSET',
         component: () => import('@/components/test.vue')
-    },
-    {
-      path:'/transit',
-        component: () => import('@/components/Transit.vue')
     },
     {
         path:'*',

@@ -39,7 +39,7 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 export default class TagsManage extends Vue {
-  tagsList: [{name:string;id:number}] = [{name:'',id:-1}];
+  tagsList: [{name:string;id:number}]  = [];
   tagData: {id:number|undefined} = {id:undefined};
   tagName: string = '';
   iconType: String = '';
@@ -63,7 +63,7 @@ export default class TagsManage extends Vue {
     nestedChild:any;
   }
   mounted() {
-    console.log(this.$refs.tag.$el.firstChild.classList.add('not_scroll'));
+    this.$refs.tag.$el.firstChild.classList.add('not_scroll')
   }
   addTag() {
     if (this.tagName === '') {
@@ -130,7 +130,7 @@ export default class TagsManage extends Vue {
   display: inline-block;
 }
 
-.list-complete-leave-active {
+.fade-leave-active {
   position: absolute;
 }
 

@@ -2,9 +2,10 @@
   <div id="home">
     <Nav @toggle-slide="toggleSlide"
          @getUser="getUser"
+         :keyword.sync="keyword"
     />
     <div id='ContainerBox_app'>
-      <router-view/>
+      <router-view   />
     </div>
 
     <sweet-modal ref="userInfo">
@@ -41,16 +42,14 @@
       </template>
     </sweet-modal>
     <sweet-modal ref="submited" icon="success">
-
     </sweet-modal>
-
   </div>
 </template>
 
 <script lang="ts">
-import {Component, Inject, Provide, Vue, Watch} from 'vue-property-decorator';
+import {Component, Inject, Provide, ProvideReactive, Vue, Watch} from 'vue-property-decorator';
 import ContainerBoxLeft from '@/components/Home/ContainerBoxLeft.vue';
-import {user} from '@/typs';
+import {NoteDataType, user} from '@/typs';
 import Nav from '@/components/Nav.vue';
 import {mapGetters} from 'vuex';
 
@@ -68,10 +67,18 @@ export default class Home extends Vue {
   // todo 刷新当前组件
   slideShow: boolean = false;
   routeId!: number;
+  // middle:NoteDataType[]=[]
+
+  @ProvideReactive() keyword:string = '';
 
   formData: any | undefined ;
+  @Watch('$route')
+  routeChange(to: any, from: any) {
+    this.keyword = ''
+  }
 
   handleFiles() {
+
     let uploadFile = this.$refs.uploadImg.files[0];
     //图片不能过大
     let number = uploadFile.size;

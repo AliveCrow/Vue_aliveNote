@@ -1,6 +1,6 @@
 <template>
   <div class="bottom_fun" >
-    <blockquote v-show="$route.fullPath==='/notes'"  style="display: inline;position: relative" v-on-clickaway="closeCard" @click="showCard">
+    <blockquote v-show="$route.fullPath==='/notes' || $route.fullPath==='/search'  "  style="display: inline;position: relative" v-on-clickaway="closeCard" @click="showCard">
       <eva-icon name="color-palette-outline" class="icons" height="18px" width="18px"
                 data-name="选择颜色"></eva-icon>
       <Card height="104px"
@@ -20,7 +20,7 @@
         </template>
       </Card>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/archive' || $route.fullPath==='/notes'"  @click="setArchive(note)">
+    <blockquote v-show="$route.fullPath==='/archive' || $route.fullPath==='/notes' || $route.fullPath==='/search' "  @click="setArchive(note)">
       <eva-icon name="archive-outline"
                 class="icons"
                 height="18px"
@@ -28,7 +28,7 @@
                 :data-name="[$route.fullPath==='/archive'?'取消归档':'归档']"
       ></eva-icon>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/notes'|| $route.fullPath==='/notes'"  style="display: inline;position: relative" v-on-clickaway="closeTagCard">
+    <blockquote v-show="$route.fullPath==='/notes'|| $route.fullPath==='/notes' || $route.fullPath==='/search' "  style="display: inline;position: relative" v-on-clickaway="closeTagCard">
       <eva-icon name="bookmark-outline" class="icons" height="18px" width="18px" data-name="添加标签"
                 @click="showTagCard"></eva-icon>
       <Card height="200px"
@@ -50,12 +50,12 @@
         </template>
       </Card>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/rec'"  @click="restoreNote(note)">
+    <blockquote v-show="$route.fullPath==='/rec'  "  @click="restoreNote(note)">
       <eva-icon name="minus-circle" class="icons" height="18px" width="18px"
                 data-name="还原"
       ></eva-icon>
     </blockquote>
-    <blockquote v-show="$route.fullPath==='/rec' || $route.fullPath==='/notes'"  @click="deleteNote(note)">
+    <blockquote v-show="$route.fullPath==='/rec' || $route.fullPath==='/notes' || $route.fullPath==='/search' "  @click="deleteNote(note)">
       <eva-icon name="trash-2-outline" class="icons" height="18px" width="18px"
                 :data-name="[$route.fullPath==='/rec'?'彻底删除':'删除']"
       ></eva-icon>

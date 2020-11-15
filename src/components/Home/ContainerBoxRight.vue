@@ -1,16 +1,17 @@
 <template>
   <div class="container-box__right">
-    <InputCard :isShow.sync="isShow" v-on-clickaway="close" @submit="updateList"/>
+    <InputCard :isShow.sync="isShow" v-on-clickaway="close" @submit="updateList"  />
     <div class="magic_box">
-      <div class="top_note list">
-        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" >置顶的notes</div>
+      <div class="top_note list"  >
+        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" v-show="!(topList.length===0)">置顶的notes</div>
         <Waterfalls @update:isTop="true"
-                    :listArr="topList"
-                    @asyncListArr="changeNote"
-        ></Waterfalls>
+                      :listArr="topList"
+                      @asyncListArr="changeNote"
+          ></Waterfalls>
       </div>
-      <div class="list">
-        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px">notes</div>
+
+      <div class="list" >
+        <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" v-show="!(list.length===0)" >notes</div>
         <Waterfalls @update:isTop="false"
                     :listArr="list"
                     @asyncListArr="changeNote"
@@ -102,6 +103,8 @@ export default class ContainerBoxRight extends Mixins(HomeMixin,updateNoteMixin)
 }
 </script>
 <style scoped lang='scss'>
+
+
 
 .item {
   padding: 10px;

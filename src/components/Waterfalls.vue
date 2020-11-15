@@ -20,7 +20,7 @@
       </NoteCard>
     </isotope>
 
-    <Modal :note="note" @modalRef="modal = $event" @dataChange="reRender"></Modal>
+    <Modal :note.sync="note" @modalRef="modal = $event" @dataChange="reRender"></Modal>
 
   </div>
 

@@ -1,7 +1,7 @@
 <template>
   <div  >
     <div id='NoteCard_app' :style="{'background-color':syncBackgroundColor}">
-      <div class="to_top" ref="top1" @click="topBtn">
+      <div class="to_top" ref="top1" @click="topBtn" v-show="$route.fullPath!=='/rec' && $route.fullPath!=='/search'">
         <eva-icon name="toggle-left-outline" ref="top2" class="icons" v-if="!isTop"></eva-icon>
         <eva-icon name="toggle-right" class="icons" ref="top3" v-else></eva-icon>
       </div>
