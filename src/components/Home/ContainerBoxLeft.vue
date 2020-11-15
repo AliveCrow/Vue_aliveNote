@@ -90,7 +90,6 @@ export default class ContainerBoxLeft extends Vue {
   padding-top: 10px;
   //position: absolute;
   .selected {
-    fill: #fff !important;
 
     &:hover {
       background-color: $info !important;
@@ -101,6 +100,7 @@ export default class ContainerBoxLeft extends Vue {
     }
 
     > .icons {
+      fill: #fff !important;
       background-color: $info !important;
     }
   }

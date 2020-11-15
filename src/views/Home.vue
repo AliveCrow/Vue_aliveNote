@@ -8,14 +8,14 @@
       <router-view   />
     </div>
 
-    <sweet-modal ref="userInfo">
+    <sweet-modal ref="userInfo" @click="close">
       <template v-slot:title>
         账号信息管理
       </template>
       <section class="content">
         <div class="set-img ">
           <form>
-            <img :src="user.avatar" alt="加载失败" height="150px" class="">
+            <img :src="previewAvatar" alt="加载失败" height="150px" class="">
             <label class="g_border">
               <input type="file" style="width: 100%" accept=".jpg, .jpeg, .png" ref="uploadImg" @change="handleFiles">
             </label>
@@ -77,8 +77,8 @@ export default class Home extends Vue {
     this.keyword = ''
   }
 
+  previewAvatar:string= ''
   handleFiles() {
-
     let uploadFile = this.$refs.uploadImg.files[0];
     //图片不能过大
     let number = uploadFile.size;
@@ -86,7 +86,8 @@ export default class Home extends Vue {
       this.$toast.error('图片大小不能超过3MB');
       return;
     }
-    this.user.avatar = URL.createObjectURL(uploadFile); //缩略图
+
+    this.previewAvatar = URL.createObjectURL(uploadFile); //缩略图
     // if (number < 1024) {
     //   number = number + 'bytes';
     // } else if (number >= 1024 && number < 1048576) {
@@ -96,6 +97,10 @@ export default class Home extends Vue {
     // }
     this.formData = new FormData()
     this.formData.append('img', uploadFile);
+  }
+
+  close(){
+    this.previewAvatar = this.user.avatar
   }
 
   submit() {
@@ -119,6 +124,7 @@ export default class Home extends Vue {
 
   getUser(userData: user) {
     this.user = userData;
+    this.previewAvatar = this.user.avatar
     this.$refs.userInfo.open();
   }
 
