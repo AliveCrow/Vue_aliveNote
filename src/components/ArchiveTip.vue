@@ -7,19 +7,14 @@
 
 <script lang="ts">
 import {Component, Emit, Mixins, Prop, Vue} from 'vue-property-decorator';
-import {NoteDataType} from '@/typs';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
-import ContainerBoxRight from '@/components/Home/ContainerBoxRight.vue';
 
 @Component
-export default class ArchiveTip extends Mixins(ModalMixinBottomFunc) {
+export default class ArchiveTip extends Vue {
   @Prop(String) content: string | undefined;
-
 
   @Emit('abc')
   abc(){
   }
-
 
 }
 </script>

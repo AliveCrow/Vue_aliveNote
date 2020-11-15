@@ -46,6 +46,7 @@ _axios.interceptors.request.use((config) => {
 // respone拦截器 ==> 对响应做处理
 _axios.interceptors.response.use((response) => {
         // Do something with response data
+
         response.load = true
         if(response.status!==200){
             router.replace('/login').then(()=>Vue.$toast.error('token过期'))
@@ -58,8 +59,6 @@ _axios.interceptors.response.use((response) => {
             status?:number,
             msg:string,
         }
-        console.log(error.response);return
-
         let err = JSON.parse(JSON.stringify(error.response))
         switch (err.status) {
             case 404:

@@ -56,8 +56,9 @@ export default class ModalMixinBottomFunc extends Vue {
         return type
     };
 
+    // TODO 暴露具体哪个note需要更新
     @Emit('dataChange')
-    dataChange(e:string,id:number){
+    whichUpdate(e:string,id:number){
         return arguments
     }
 

@@ -24,9 +24,8 @@
         {{ item.name }}
       </div>
     </div>
-    <BottomFunc :note="asyncNote" style="opacity: 1;position: relative;margin-bottom: -20px"
+    <BottomFunc asyncNote="asyncNote" style="opacity: 1;position: relative;margin-bottom: -20px"
                 :modal="this.$refs.modal"
-                @updateWaterFall="dataChange($event,asyncNote.id)"
                 @colorValue="setBgc"
     ></BottomFunc>
   </sweet-modal>
@@ -47,6 +46,12 @@ export default class Modal extends Mixins(ModalMixinBottomFunc) {
   @Emit('modalRef')
   modelRef() {
     return this.$refs.modal;
+  }
+
+  // TODO 暴露具体哪个note需要更新
+  @Emit('whichUpdate')
+  whichUpdate(e:string,id:number){
+    return arguments
   }
 
   mounted() {
@@ -88,66 +93,8 @@ export default class Modal extends Mixins(ModalMixinBottomFunc) {
 <style scoped lang='scss'>
 @import "src/assets/scss/var";
 
-.NoteCard_app_content {
-  margin-bottom: 50px;
-  text-align: left;
 
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
 
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(#efefef, .5);
-    border-radius: 8px;
-  }
-}
-
-.title {
-  font-size: 1.4rem;
-}
-
-.content {
-  line-height: 24px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 7;
-  overflow: hidden;
-  padding-right: 4px;
-
-  &::-webkit-scrollbar {
-    width: 2px;
-    background-color: rgba($searchBgcColor, 1);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: $info;
-  }
-}
-
-.showTag {
-  max-height: 120px;
-  overflow-y: auto;
-  display: flex;
-  flex-wrap: nowrap;
-
-  .showTag_foreach {
-    line-height: 10px;
-    height: 20px;
-    margin: 5px;
-    padding: 5px;
-    min-width: 60px;
-    background-color: $searchBgcColor;
-    border-radius: 3px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: .6rem;
-  }
-}
 
 .bottom_fun_model {
   display: flex;

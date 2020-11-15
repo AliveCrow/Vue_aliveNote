@@ -5,7 +5,7 @@
         <eva-icon name="toggle-left-outline" ref="top2" class="icons" v-if="!isTop"></eva-icon>
         <eva-icon name="toggle-right" class="icons" ref="top3" v-else></eva-icon>
       </div>
-      <blockquote @click="showContent" >
+      <blockquote @click="clickNoteCard" >
         <div class="title NoteCard_app_content">
           <slot name="title"></slot>
         </div>
@@ -19,9 +19,7 @@
           </div>
         </div>
       </blockquote>
-      <BottomFunc :note="syncedNoteData"
-                  @updateWaterFall="dataChange($event,syncedNoteData.id)"
-      ></BottomFunc>
+      <BottomFunc :note.sync="syncedNoteData"></BottomFunc>
     </div>
   </div>
 
@@ -59,7 +57,20 @@ export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
     this.isTop = this.syncedNoteData.isTop;
   }
 
+  // TODO 暴露具体哪个note需要更新
+  @Emit('whichUpdate')
+  whichUpdate(e:string,id:number){
+    return arguments
+  }
+  @Emit('changeView')
+  changeView(e:number) {
+    return e;
+  }
 
+
+  clickNoteCard(){
+    this.$EventBus.$emit('clickNoteCard',this.syncedNoteData)
+  }
 
   topBtn() {
     this.isTop = !this.isTop;
@@ -109,14 +120,7 @@ export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
   }
 
 
-  @Emit('changeView')
-  changeView(e:number) {
-    return e;
-  }
-  @Emit('getData')
-  showContent() {
-    return this.syncedNoteData
-  }
+
 
 }
 </script>
@@ -149,6 +153,7 @@ export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
   .NoteCard_app_content {
     margin: 15px;
     text-align: left;
+
   }
   .title {
     font-size: 1.4rem;
@@ -184,6 +189,7 @@ export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
 .showTag {
   display: flex;
   overflow: auto;
+  height: 30px;
   &::-webkit-scrollbar {
     height: 5px;
     background-color: transparent;

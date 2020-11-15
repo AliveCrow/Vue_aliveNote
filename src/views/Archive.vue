@@ -19,11 +19,18 @@ export default class Archive extends Vue {
       this.archiveList = res.data.res[0].Labels
     })
   }
-
+  restoreArchive(e){
+    let index = this.archiveList.findIndex(item=>item.id === e.id)
+    this.archiveList.splice(index,1)
+  }
   created(){
     this.init()
+    this.$EventBus.$on('restoreArchive',this.restoreArchive)
   }
 
+  beforeDestroy(){
+    this.$EventBus.$emit('restoreArchive',this.restoreArchive)
+  }
 }
 </script>
 <style scoped lang='scss'>

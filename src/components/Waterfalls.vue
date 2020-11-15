@@ -4,9 +4,7 @@
       <NoteCard v-for="element in asyncListArr" :key="element.id"
                 :backgroundColor="element.color"
                 :noteData="element"
-                @dataChange="reRender"
                 @changeView="changeView($event,element)"
-                @getData="getData"
       >
         <template v-slot:title>
           {{ element.title }}
@@ -20,7 +18,7 @@
       </NoteCard>
     </isotope>
 
-    <Modal :note.sync="note" @modalRef="modal = $event" @dataChange="reRender"></Modal>
+<!--    <Modal :note.sync="note" @modalRef="modal = $event" @dataChange="reRender"></Modal>-->
 
   </div>
 
@@ -66,9 +64,12 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
     Tags: []
   };
 
+  created(){
+
+  }
   mounted() {
-    this.modal.$el.childNodes[0].style.overflow = 'visible';
-    this.modal.$el.childNodes[0].style.borderRadius = '10px';
+    // this.modal.$el.childNodes[0].style.overflow = 'visible';
+    // this.modal.$el.childNodes[0].style.borderRadius = '10px';
   }
 
   leaveItem:NoteDataType ={
@@ -81,35 +82,13 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
     isTop: false,
     Tags: []
   };
-  reRender(e:any) {
-    let type = e[0]
-    let id = e[1]
-    let itemIndex = this.asyncListArr.findIndex((item) => item.id === id)
-    if (type === 'setColor') {
-      return;
-    }else if(type === 'restoreArchive' || type === 'restore'){
-      this.asyncListArr.push(this.leaveItem)
-     return
-    }
-    else {
-      this.leaveItem = this.asyncListArr[itemIndex]
-      this.asyncListArr.splice(itemIndex, 1);
-    }
-    this.$nextTick(() => {
-      if (this.asyncIsTop) {
-        this.asyncListArr = this.asyncListArr.filter((item: { isTop: boolean; archiveId: number | null }) => item.isTop && item.archiveId === null && item.isTop === this.asyncIsTop);
-      } else {
-        this.asyncListArr = this.asyncListArr.filter((item: { isTop: boolean; archiveId: number | null }) => !item.isTop && item.archiveId === null && item.isTop === this.asyncIsTop);
-      }
-    });
 
-  }
 
   //获取店家note的数据
   getData(e: NoteDataType) {
     this.note = e;
     this.modal.open();
-    this.modal.$el.childNodes[0].style.backgroundColor = `${e.color}`;
+    // this.modal.$el.childNodes[0].style.backgroundColor = `${e.color}`;
   }
 
   //更换是否置顶
@@ -128,6 +107,7 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
       });
     });
   }
+
   @Emit('asyncListArr')
   emitAsyncListArr(note: NoteDataType) {
     return note;

@@ -78,8 +78,8 @@ export default class Home extends Vue {
   routeId!: number;
   formData: any | undefined;
   previewAvatar: string = "";
-
-  @ProvideReactive() keyword: string = "";
+  keyword:string='';
+  // @ProvideReactive() keyword: string = ''
 
   //获取用户信息
   getUser(userData: user) {
@@ -120,10 +120,10 @@ export default class Home extends Vue {
       });
   }
 
-  @Watch("$route")
-  routeChange(to: any, from: any) {
-    this.keyword = "";
-  }
+  // @Watch("$route")
+  // routeChange(to: any, from: any) {
+  //   this.keyword = "";
+  // }
 }
 </script>
 

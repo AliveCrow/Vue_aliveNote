@@ -20,7 +20,8 @@ import { directive as onClickaway } from 'vue-clickaway'
 import EvaIcons from 'vue-eva-icons';
 import NoteCard from '@/components/NoteCard.vue';
 
-
+var eventBus = new Vue()
+Vue.prototype.$EventBus = eventBus
 Vue.config.productionTip = false
 
 Vue.directive('on-clickaway', onClickaway)

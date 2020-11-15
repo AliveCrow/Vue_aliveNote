@@ -84,6 +84,7 @@ export default class Nav extends Vue {
 
   created() {
     this.axios.get('/users').then(res => {
+      console.log(res);
       this.$nextTick(() => {
         this.user = {
           id: res.data.userInfo.id,

@@ -18,9 +18,6 @@ export default class Card extends Vue {
   @Prop(String) height:string|undefined;
   @Prop(String) animationName:string|undefined;
   @PropSync('isShow',{type:Boolean}) showCard!:boolean;
-
-
-
 }
 </script>
 <style scoped lang='scss'>

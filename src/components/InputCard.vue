@@ -2,17 +2,15 @@
   <div class="container-box__right_input" ref="box__right_input">
     <div class="input_box">
       <label for="one">
-        <input type="text" ref="input_title" @focus="open" id="one" class="input_1" placeholder="标题">
+        <input type="text" ref="input_title" @focus="show = true;" id="one" class="input_1" placeholder="标题">
       </label>
-      <div class="to_top" v-show="show" @click="topBtn">
+      <div class="to_top" v-show="show" @click="isTop = !isTop;">
         <eva-icon name="toggle-left-outline" class="icons" v-if="!isTop"></eva-icon>
         <eva-icon name="toggle-right" class="icons  " v-else></eva-icon>
       </div>
       <blockquote v-show="show">
-        <at v-model="html">
-          <div id="two" class="input_2" ref="input_2" contenteditable="true" v-html="html">
+          <div id="two" class="input_2" ref="input_2" contenteditable="true" >
           </div>
-        </at>
         <div class="showTag">
           <div class="showTag_foreach" v-for="item in selectedTags" :key="item.id">
             {{ item.name }}
@@ -20,7 +18,7 @@
         </div>
         <div class="input_box__fun">
           <div>
-            <blockquote style="display: inline;position: relative" @click="showCard">
+            <blockquote style="display: inline;position: relative" @click="cardShow = !cardShow;">
               <eva-icon name="color-palette-outline" class="icons add_color" v-on-clickaway="closeCard"></eva-icon>
               <Card height="104px"
                     width="138px"
@@ -45,7 +43,7 @@
               ></eva-icon>
             </blockquote>
             <blockquote style="display: inline;position: relative" v-on-clickaway="closeTagCard">
-              <eva-icon name="bookmark-outline" class="icons tags" @click="showTagCard"></eva-icon>
+              <eva-icon name="bookmark-outline" class="icons tags" @click="cardTagShow = !cardTagShow;"></eva-icon>
               <Card height="200px"
                     :isShow="cardTagShow"
                     animationName="fade"
@@ -77,55 +75,21 @@
 import {Component, Emit, Mixins, PropSync, Vue} from 'vue-property-decorator';
 import Card from '@/components/Card.vue';
 import ArchiveTip from '@/components/ArchiveTip.vue';
-import HomeMixin from '@/mixins/HomeMixin';
-import CardMixin from '@/mixins/CardMixin';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
+import CommonData from '@/mixins/CommonData';
+import {mixins} from 'vue-class-component';
 
 @Component({
   components: {Card}
 })
-export default class InputCard extends Mixins(HomeMixin, CardMixin) {
+export default class InputCard extends  mixins(CommonData) {
   @PropSync('isShow', {type: Boolean}) show!: boolean;
   selectedTags: [] = [];
   selected: number |null = null;
   html:string = ''
   // @Emit('open')
-  open() {
-    this.show = true;
-  }
-
-  selectTag(tag:never) {
-    let i = this.selectedTags.indexOf(tag);
-    if (i !== -1) {
-      this.selectedTags.splice(i, 1);
-    } else {
-      this.selectedTags.push(tag);
-    }
-  }
-  public $refs!:{
-    box__right_input:HTMLElement;
-    input_title:HTMLInputElement;
-    input_2:HTMLElement;
-  }
-
+  isTop:boolean = false;
   selectedColor:string |undefined;
-  selectColor(item: string) {
-    this.$refs.box__right_input.style.backgroundColor = item;
-    this.$refs.input_title.style.backgroundColor = item;
-    this.selectedColor = item;
-  }
-
-  isTop:boolean|undefined;
-  reset() {
-    this.$refs.box__right_input.style.backgroundColor = '#fff';
-    this.$refs.input_title.style.backgroundColor = '#fff';
-    this.$refs.input_title.value = '';
-    this.$refs.input_2.textContent = '';
-    this.$refs.input_2.setAttribute('data-placeholder', '添加记事...');
-    this.isTop = false;
-    this.selectedTags = [];
-  };
-
   @Emit('submit')
   submit(type: string) {
     this.show = false;
@@ -145,6 +109,46 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
     return note;
   }
 
+  created() {
+    this.$nextTick(() => {
+      this.$refs.input_2.setAttribute('data-placeholder', '添加记事...');
+      this.$refs.input_2.addEventListener('input', function (e: any) {
+        let content = e.target.textContent;
+        if (content.length !== 0) {
+          this.removeAttribute('data-placeholder');
+        } else {
+          this.setAttribute('data-placeholder', '添加记事...');
+        }
+      });
+    });
+  }
+
+  selectTag(tag:never) {
+    let i = this.selectedTags.indexOf(tag);
+    if (i !== -1) {
+      this.selectedTags.splice(i, 1);
+    } else {
+      this.selectedTags.push(tag);
+    }
+  }
+
+
+  selectColor(item: string) {
+    this.$refs.box__right_input.style.backgroundColor = item;
+    this.$refs.input_title.style.backgroundColor = item;
+    this.selectedColor = item;
+  }
+
+  reset() {
+    this.$refs.box__right_input.style.backgroundColor = '#fff';
+    this.$refs.input_title.style.backgroundColor = '#fff';
+    this.$refs.input_title.value = '';
+    this.$refs.input_2.textContent = '';
+    this.$refs.input_2.setAttribute('data-placeholder', '添加记事...');
+    this.isTop = false;
+    this.selectedTags = [];
+  };
+
   goArchive() {
     this.show = false;
     this.axios.get('/users').then(res => {
@@ -160,7 +164,7 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
       };
       this.axios.post('/labels', note).then(res => {
         if (res.data.stateCode === 0) {
-          this.$toast.success(ArchiveTip, {
+          this.$toast.success("已归档", {
             position: 'bottom-left'
           } as CommonOptions);
           this.reset();
@@ -173,19 +177,6 @@ export default class InputCard extends Mixins(HomeMixin, CardMixin) {
 
   }
 
-  created() {
-    this.$nextTick(() => {
-      this.$refs.input_2.setAttribute('data-placeholder', '添加记事...');
-      this.$refs.input_2.addEventListener('input', function (e: any) {
-        let content = e.target.textContent;
-        if (content.length !== 0) {
-          this.removeAttribute('data-placeholder');
-        } else {
-          this.setAttribute('data-placeholder', '添加记事...');
-        }
-      });
-    });
-  }
 
 
 }
