@@ -193,7 +193,6 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${e.color}`;
   }
   setBgc(e){
-    console.log(this.$refs);
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${e}`;
   }
   closeModal(){

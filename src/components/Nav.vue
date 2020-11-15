@@ -17,7 +17,7 @@
         <eva-icon name="search-outline" fill="#000" class=" icon" v-show="isShow"></eva-icon>
       </div>
       <label >
-        <input type="text" class="search" placeholder="搜索" v-model="asyncKeyWord" @click="pushSearch" />
+        <input type="text" class="search" placeholder="搜索" v-model="keyword" @input="input" @click="pushSearch" />
       </label>
       <div class="search-input__close icons"  @click.stop="outSearch">
         <eva-icon name="close-outline" fill="#000" class=" icon"   v-show="isShow"></eva-icon>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Inject, PropSync, Provide, Vue, Watch} from 'vue-property-decorator';
+import {Component, Emit, Inject, PropSync, Provide, ProvideReactive, Vue, Watch} from 'vue-property-decorator';
 import {State} from 'vuex-class';
 import Card from '@/components/Card.vue';
 import {NoteDataType, user} from '@/typs';
@@ -72,19 +72,23 @@ export default class Nav extends Vue {
   cardShow:boolean= false;
   slideShow:boolean = false;
 
-
   @State('userInfo', {namespace: 'userInfo'}) userInfo!:user;
 
 
-  @PropSync('keyword',{type:String}) asyncKeyWord!:string
+  // @PropSync('keyword',{type:String}) asyncKeyWord!:string
   @Emit('getUser')
   getUser() {
     return this.user;
   }
 
+  keyword:string = ''
+  input(){
+    this.$EventBus.$emit('input',this.keyword)
+  }
+
+
   created() {
     this.axios.get('/users').then(res => {
-      console.log(res);
       this.$nextTick(() => {
         this.user = {
           id: res.data.userInfo.id,
@@ -125,7 +129,7 @@ export default class Nav extends Vue {
   outSearch(){
     this.isShow = false
     this.$router.push('/notes')
-    this.asyncKeyWord = ''
+    this.keyword = ''
   }
 
 

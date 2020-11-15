@@ -14,13 +14,17 @@ import any = jasmine.any;
   components: {Waterfalls}
 })
 export default class Search extends Vue {
-  @InjectReactive() readonly keyword!:string// => //searchList: 'searchList',
 
-  searchList:NoteDataType[] = []
+  mounted(){
+    this.$EventBus.$on('input',this.in)
+  }
+  beforeDestroy(){
+    this.$EventBus.$off('input')
+  }
+  searchList:NoteDataType[] = [];
 
-  @Watch('keyword')
-  in(){
-    this.search(this.keyword)
+  in(e){
+    this.search(e)
   }
 
   search(keyword:string) {
