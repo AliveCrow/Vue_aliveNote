@@ -1,5 +1,5 @@
-import {userInfoState, RootState} from '@/store/store';
-import {MutationTree, GetterTree, StoreOptions, Module, ActionTree} from 'vuex';
+import { userInfoState, RootState } from '@/store/store';
+import { MutationTree, GetterTree, StoreOptions, Module, ActionTree } from 'vuex';
 import Vue from 'vue';
 
 
@@ -33,7 +33,7 @@ export const mutations: MutationTree<userInfoState> = {
 };
 export const actions: ActionTree<userInfoState, RootState> = {
     async login(context) {
-        try{
+        try {
             let res = await Vue.axios.post('/login', context.state.login);
             if (res.data.stateCode === -1) {
                 Vue.$toast.error(res.data.msg);
@@ -44,11 +44,18 @@ export const actions: ActionTree<userInfoState, RootState> = {
                 localStorage.setItem('AliveUserId', res.data.id);
                 return true
             }
-        }catch(err){
+        } catch (err) {
             Vue.$toast.warning('接口错误');
         }
-
-    }
+    },
+    async getUserInfo(context) {
+        try {
+            let res = await Vue.axios.get('/users')
+            return res.data.userinfo
+        } catch (error) {
+            Vue.$toast.error('请求错误')
+        }
+    },
 };
 export const getters: GetterTree<userInfoState, RootState> = {};
 

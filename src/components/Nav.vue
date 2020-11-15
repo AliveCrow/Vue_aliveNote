@@ -5,7 +5,7 @@
         <eva-icon name="menu-outline"
                   fill="#000"
                   class="btn_open_slide icons"
-                  @click="toggleSlide"
+                  @click="slideShow = !slideShow"
         ></eva-icon>
         <ContainerBoxLeft :show="slideShow" className="ContainerBoxLeft"  />
       </div>
@@ -28,7 +28,7 @@
       <!--        <div class="re_fresh"></div>-->
       <eva-icon name="layers-outline" fill="000" class="nav__myapp nav-right__common icons" style="cursor:not-allowed;"></eva-icon>
       <!--        <div class="my_app"></div>-->
-      <div class="avatar" v-on-clickaway="closeCard" @click="showCard" >
+      <div class="avatar" v-on-clickaway="closeCard" @click="cardShow = !cardShow" >
           <img :src="user.avatar" alt="头像"  class="nav_avatar"  height="45px" >
         <Card  className="userInfo_card" :isShow="cardShow" animationName="fade" >
           <template v-slot:title >
@@ -61,7 +61,6 @@ import Waterfalls from '@/components/Waterfalls.vue';
   components: {Waterfalls, ContainerBoxLeft, Card}
 })
 export default class Nav extends Vue {
-  isShow:boolean=false;
   user: user = {
     id: 0,
     username: '',
@@ -69,33 +68,20 @@ export default class Nav extends Vue {
     avatar: '',
     email: ''
   };
-  isSHow: boolean = false;
+  isShow: boolean = false;
   cardShow:boolean= false;
   slideShow:boolean = false;
 
+
   @State('userInfo', {namespace: 'userInfo'}) userInfo!:user;
 
-  toggleSlide() {
-    this.slideShow = !this.slideShow
-  }
-  closeSlide(){
-    this.slideShow = false
-  }
+
+  @PropSync('keyword',{type:String}) asyncKeyWord!:string
   @Emit('getUser')
   getUser() {
     return this.user;
   }
 
-  showCard(){
-    this.cardShow = !this.cardShow
-  }
-  closeCard(){
-    this.cardShow = false
-  }
-  refresh(){
-    this.$router.push('/transit')
-  }
-  userData:user|undefined;
   created() {
     this.axios.get('/users').then(res => {
       this.$nextTick(() => {
@@ -111,16 +97,22 @@ export default class Nav extends Vue {
       console.log(error);
     });
   }
+
+  closeSlide(){
+    this.slideShow = false
+  }
+  closeCard(){
+    this.cardShow = false
+  }
+
+  refresh(){
+    this.$router.push('/transit')
+  }
   exit(){
     localStorage.removeItem('jwt_token')
     this.$router.push('login')
   }
 
-  @PropSync('keyword',{type:String}) asyncKeyWord:string|''
-
-
-
-  formRouter:string = '';
   pushSearch(){
     this.isShow = true
     if(this.$route.fullPath==='/search'){
@@ -134,6 +126,7 @@ export default class Nav extends Vue {
     this.$router.push('/notes')
     this.asyncKeyWord = ''
   }
+
 
 
 

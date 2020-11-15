@@ -18,17 +18,17 @@
       <template v-slot:title>
         编辑标签
       </template>
-        <template v-slot:default>
-          <label>
-            <input class="tag_name"  ref="input" v-model="tagData.name"  />
-          </label>
-          <!--        </input>-->
-        </template>
+      <template v-slot:default>
+        <label>
+          <input class="tag_name" ref="input" v-model="tagData.name"/>
+        </label>
+        <!--        </input>-->
+      </template>
       <template slot="button">
         <button class="editButton" @click="deleteTag">删除标签</button>
       </template>
     </sweet-modal>
-    <sweet-modal ref="nestedChild"  icon="success">
+    <sweet-modal ref="nestedChild" icon="success">
       删除成功
     </sweet-modal>
   </div>
@@ -39,10 +39,16 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 export default class TagsManage extends Vue {
-  tagsList: [{name:string;id:number}]  = [];
-  tagData: {id:number|undefined} = {id:undefined};
+  $refs!: {
+    tag: any
+    modal: any;
+    input: HTMLInputElement;
+    nestedChild: any;
+  };
+  tagsList: [] = [];
+  tagData: { id: number | undefined } = {id: undefined};
   tagName: string = '';
-  iconType: String = '';
+  iconType: string = '';
   content: string = '';
 
   init() {
@@ -52,19 +58,11 @@ export default class TagsManage extends Vue {
       this.$toast.error(error.msg);
     });
   }
+
   created() {
     this.init();
   }
 
-  $refs!:{
-    tag:any
-    modal:any;
-    input:HTMLInputElement;
-    nestedChild:any;
-  }
-  mounted() {
-    this.$refs.tag.$el.firstChild.classList.add('not_scroll')
-  }
   addTag() {
     if (this.tagName === '') {
       this.iconType = 'error';
@@ -88,7 +86,6 @@ export default class TagsManage extends Vue {
       });
     }
   }
-
   editTag(id: number) {
     this.axios.get(`/tags/${id}`).then(res => {
       this.tagData = res.data.res;
@@ -97,27 +94,25 @@ export default class TagsManage extends Vue {
     });
     this.$refs.tag.open();
   }
-
-  saveEdit(){
-      this.axios.patch(`/tags/${this.tagData.id}`,{name:(this.$refs.input.value).trim()}).then(res=>{
-        let tagIndex = this.tagsList.findIndex(item=> item.id===this.tagData.id)
-        this.tagsList[tagIndex].name = res.data.res.name
-      }).catch(error=>{
-        // console.log(error);
-      })
+  saveEdit() {
+    this.axios.patch(`/tags/${this.tagData.id}`, {name: (this.$refs.input.value).trim()}).then(res => {
+      let tagIndex = this.tagsList.findIndex(item => item.id === this.tagData.id);
+      this.tagsList[tagIndex].name = res.data.res.name;
+    }).catch(error => {
+      // console.log(error);
+    });
   }
-
-  deleteTag(){
-      this.axios.delete(`/tags/${this.tagData.id}`).then(res=>{
-        let tagIndex = this.tagsList.findIndex(item=>item.id===this.tagData.id)
-        this.tagsList.splice(tagIndex,1)
-        this.iconType = 'success';
-        this.content = '删除成功';
-        this.$refs.tag.close();
-        this.$refs.nestedChild.open();
-      }).catch(error=>{
-        console.log(error);
-      })
+  deleteTag() {
+    this.axios.delete(`/tags/${this.tagData.id}`).then(res => {
+      let tagIndex = this.tagsList.findIndex(item => item.id === this.tagData.id);
+      this.tagsList.splice(tagIndex, 1);
+      this.iconType = 'success';
+      this.content = '删除成功';
+      this.$refs.tag.close();
+      this.$refs.nestedChild.open();
+    }).catch(error => {
+      console.log(error);
+    });
   }
 }
 </script>
@@ -227,7 +222,7 @@ export default class TagsManage extends Vue {
     }
   }
 
-  .add_tag_name{
+  .add_tag_name {
     font-size: 1rem;
   }
 

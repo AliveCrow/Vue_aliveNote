@@ -18,8 +18,6 @@ export default class Search extends Vue {
 
   searchList:NoteDataType[] = []
 
-
-
   @Watch('keyword')
   in(){
     this.search(this.keyword)

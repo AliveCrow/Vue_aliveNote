@@ -1,5 +1,5 @@
 <template>
-  <div id='Container_app' :key="keyNum">
+  <div id='Container_app' >
     <div id="login_app">
       <transition name="slide" >
         <router-view ></router-view>
@@ -14,7 +14,6 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class Container extends Vue {
-  @Prop(Number) keyNum: number|undefined
 
 }
 </script>

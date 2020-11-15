@@ -91,12 +91,9 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import Container from '@/views/Container.vue';
 import {failClassConfig, successClassConfig} from '@/typs';
 
-@Component({
-  components: {Container}
-})
+@Component
 export default class Register extends Vue {
   public $refs!:{
     register:HTMLInputElement;
