@@ -5,13 +5,14 @@
     <router-view />
   </div>
 
-  <sweet-modal ref="userInfo" @click="previewAvatar = user.avatar">
+  <sweet-modal ref="userInfo" @click="previewAvatar = user.avatar" @close="revokePreview">
     <template v-slot:title> 账号信息管理 </template>
     <section class="content">
       <div class="set-img">
         <form>
           <img :src="previewAvatar" alt="加载失败" height="150px" class="" />
-          <label class="g_border">
+          <label class="">
+            <span class="select_img">选择文件</span>
             <input type="file" style="width: 100%" accept=".jpg, .jpeg, .png" ref="uploadImg" @change="handleFiles" />
           </label>
         </form>
@@ -79,7 +80,16 @@ export default class Home extends Vue {
   formData: any | undefined;
   previewAvatar: string = "";
   keyword:string='';
+  uploadFile:any;
   // @ProvideReactive() keyword: string = ''
+  public $refs!:{
+    uploadImg:HTMLInputElement
+  }
+  mounted(){
+    const preview = document.querySelector('.preview');
+    this.$refs.uploadImg.style.display = 'none';
+  }
+
 
   //获取用户信息
   getUser(userData: user) {
@@ -89,19 +99,23 @@ export default class Home extends Vue {
     this.$refs.userInfo.open();
   }
 
+  //关闭弹窗时释放预览图
+  revokePreview(){
+      URL.revokeObjectURL(this.uploadFile)
+  }
   //上传图片
   handleFiles() {
     //@ts-ignore
-    let uploadFile = this.$refs.uploadImg.files[0];
+    this.uploadFile = this.$refs.uploadImg.files[0];
     //图片不能过大
-    let number = uploadFile.size;
+    let number = this.uploadFile.size;
     if (number > 1048576 * 3) {
       this.$toast.error("图片大小不能超过3MB");
       return;
     }
-    this.previewAvatar = URL.createObjectURL(uploadFile); //缩略图
+    this.previewAvatar = URL.createObjectURL(this.uploadFile); //缩略图
     this.formData = new FormData();
-    this.formData.append("img", uploadFile);
+    this.formData.append("img", this.uploadFile);
   }
   submit() {
     this.axios
@@ -151,7 +165,12 @@ export default class Home extends Vue {
 
     .set-img {
       width: 150px;
-
+      .select_img{
+        background-color: $info;
+        padding: 3px 10px;
+        color: #fff;
+        border-radius: 3px;
+      }
       img {
         width: 150px;
         object-fit: cover;

@@ -1,7 +1,7 @@
 'use strict';
 
 import Vue from 'vue';
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 import router from '@/router';
 
 const baseUrl = 'http://alivenote.dreamsakula.top:3310';
@@ -11,9 +11,10 @@ const apiUrl = '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-const option = {
+const option:AxiosRequestConfig = {
     baseURL: baseUrl,
     timeout: 5000,
+    load:false
     // timeout: 60 * 1000, // Timeout
     // withCredentials: true, // Check cross-site Access-Control
 };
@@ -21,9 +22,6 @@ const option = {
 // 创建一个axios实例
 const _axios = axios.create(option);
 
-export interface AxiosRequestConfig<T> {
-    load: boolean;
-}
 
 // request拦截器 ==> 对请求参数进行处理
 _axios.interceptors.request.use(

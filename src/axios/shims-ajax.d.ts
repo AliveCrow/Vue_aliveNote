@@ -4,21 +4,27 @@ import {
 } from 'axios';
 
 declare module 'axios' {
-    export interface AxiosRequestConfig {
-        load: boolean;
+    interface AxiosInstance {
+        (config: AxiosRequestConfig): Promise<any>;
     }
+
     export interface AxiosStatic {
         baseURL: string;
         create({ baseURL: string, timeout: number }): AxiosInstance;
         axios: AxiosInstance;
     }
+
+    export interface AxiosRequestConfig {
+        load: boolean;
+    }
+
     export interface AxiosResponse<T = any> {
         load: boolean;
     }
-    interface AxiosInstance {
-        (config: AxiosRequestConfig): Promise<any>;
-    }
+
 }
+
+
 
 declare module 'vue/types/vue' {
     interface Vue {
