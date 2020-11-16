@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import _axios from '@/axios/axios-interceptors.ts'
+import axios from '@/axios/axios-interceptors.ts'
 import VueAxios from 'vue-axios'
 import App from './App.vue'
 import './registerServiceWorker'
@@ -19,12 +19,12 @@ import { directive as onClickaway } from 'vue-clickaway'
 import EvaIcons from 'vue-eva-icons';
 import NoteCard from '@/components/NoteCard.vue';
 
-let eventBus = new Vue()
+const eventBus = new Vue()
 Vue.prototype.$EventBus = eventBus
 Vue.config.productionTip = false
 
 Vue.directive('on-clickaway', onClickaway)
-Vue.use(VueAxios, _axios)
+Vue.use(VueAxios, axios)
 Vue.use(EvaIcons)
 Vue.use(SweetModal)
 Vue.use(Toast, {
@@ -45,7 +45,7 @@ Vue.use(Toast, {
   rtl: false,
   filterBeforeCreate: (toast: { type: any }, toasts: { filter: (arg0: (t: { type: any }) => boolean) => { (): any; new(): any; length: number } }) => {
     if (toasts.filter(
-        (t: { type: any }) => t.type === toast.type
+      (t: { type: any }) => t.type === toast.type
     ).length !== 0) {
       // Returning false discards the toast
       return false;
@@ -55,8 +55,8 @@ Vue.use(Toast, {
   }
 });
 
-Vue.component('NoteCard',NoteCard)
-Vue.component('isotope',isotope)
+Vue.component('NoteCard', NoteCard)
+Vue.component('isotope', isotope)
 
 new Vue({
   router,

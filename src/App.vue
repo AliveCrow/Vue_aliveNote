@@ -1,12 +1,15 @@
 <template>
-  <div id="app" >
-    <router-view/>
+  <div id="app">
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
+import Vue from "vue";
+import { Component } from "vue-property-decorator";
 
-
+@Component
+export default class App extends Vue {}
 </script>
 
 <style lang="scss">
@@ -18,25 +21,25 @@
   box-sizing: border-box;
 }
 
-body, html {
+body,
+html {
   position: relative;
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     width: 8px;
   }
-  &::-webkit-scrollbar-track{
+  &::-webkit-scrollbar-track {
     background-color: transparent;
   }
-  &::-webkit-scrollbar-thumb{
+  &::-webkit-scrollbar-thumb {
     background-color: $defaultBorderColor;
     border-radius: 3px;
-    &:hover{
+    &:hover {
       background-color: $info;
     }
   }
-
 }
 
-li{
+li {
   list-style: none;
 }
 a {
@@ -45,10 +48,14 @@ a {
 }
 .item-move {
   /* applied to the element when moving */
-  transition: transform .5s cubic-bezier(.55,0,.1,1);
+  transition: transform 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
 #app {
-  font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
+  font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica,
+    "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB",
+    "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN",
+    "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti",
+    SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -87,17 +94,15 @@ a {
   border-color: $success;
 }
 
-
 .tip {
-  font-size: .6rem;
+  font-size: 0.6rem;
   text-align: left;
   width: 100%;
   display: inline-block;
 }
 .sweet-modal.is-visible {
-  &::-webkit-scrollbar{
-    width: 0!important;
+  &::-webkit-scrollbar {
+    width: 0 !important;
   }
 }
-
 </style>
