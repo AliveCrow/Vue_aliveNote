@@ -164,7 +164,6 @@ export default class BottomFunc extends mixins<any>(CommonData) {
         isTop: false,
       };
     }
-    console.log(this);
   }
 
   whichUpdate(type: string, note: Record<string, any>) {

@@ -10,10 +10,8 @@
           {{ element.title }}
         </template>
         <template v-slot:content>
-          <at>
             <div v-html="element.content">
             </div>
-          </at>
         </template>
       </NoteCard>
     </isotope>

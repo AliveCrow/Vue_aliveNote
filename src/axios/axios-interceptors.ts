@@ -4,7 +4,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import router from '@/router';
 
-const baseUrl = 'http://localhost:3000';
+const baseUrl = 'http://alivenote.dreamsakula.top:3310';
 const apiUrl = '';
 
 // Full config:  https://github.com/axios/axios#request-config
@@ -39,7 +39,10 @@ _axios.interceptors.request.use(
     // tslint:disable-next-line: only-arrow-functions
     function(error) {
         // 处理请求错误
-        return Promise.reject(error);
+        router.replace('/login').then((r) => {
+            Vue.$toast.error('请求错误');
+            return Promise.reject(error);
+        });
     }
 );
 
@@ -88,7 +91,11 @@ _axios.interceptors.response.use(
             status: err.status,
             msg: err.msg,
         };
-        return Promise.reject(errorText);
+        router.replace('/login').then((r) => {
+            Vue.$toast.error('token失效');
+            return Promise.reject(errorText);
+        });
+
     }
 );
 
