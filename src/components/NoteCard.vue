@@ -41,18 +41,18 @@ import {
 import Card from '@/components/Card.vue';
 import {NoteDataType} from '@/typs';
 import BottomFunc from '@/components/BottomFunc.vue';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 
 
 @Component({
   components: {BottomFunc, Card}
 })
-export default class NoteCard extends Mixins(ModalMixinBottomFunc) {
+export default class NoteCard extends Vue {
   @PropSync('backgroundColor',{type:String}) syncBackgroundColor!:string;
   @Prop(String) className?: string;
   @PropSync('noteData', {type: Object}) syncedNoteData!: NoteDataType;
 
   isTop:boolean = false;
+  $EventBus: any;
   mounted() {
     this.isTop = this.syncedNoteData.isTop;
   }

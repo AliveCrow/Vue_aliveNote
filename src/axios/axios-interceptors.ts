@@ -4,7 +4,6 @@ import Vue from 'vue';
 import axios from "axios";
 import router from '@/router';
 
-
 const baseUrl = 'http://localhost:3000';
 const apiUrl = ''
 
@@ -60,13 +59,19 @@ _axios.interceptors.response.use((response) => {
             msg:string,
         }
         let err = JSON.parse(JSON.stringify(error.response))
+
         switch (err.status) {
             case 404:
                 err.msg='请求错误'
                 break
             case 401:
                 err.msg='token失效'
-                router.replace('/login').then(r =>{})
+                if(router.currentRoute.fullPath==='/login'){
+                    Vue.$toast.error('token失效')
+                    return
+                }else {
+                    router.replace('/login').then(r =>{Vue.$toast.error('token失效')})
+                }
                 break
             case 500:
                 err.msg='服务器错误'

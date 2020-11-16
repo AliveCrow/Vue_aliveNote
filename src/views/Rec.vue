@@ -14,12 +14,14 @@
 import {Component, Vue, Watch} from 'vue-property-decorator';
 import Waterfalls from '@/components/Waterfalls.vue';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
+import {NoteDataType} from '@/typs';
 @Component({
   components: {Waterfalls}
 })
 export default class Rec extends Vue {
 
   recList:NodeList[] =[];
+  $EventBus: any;
 
   init(){
     this.axios.get('/labels/deleted').then(res=>{
@@ -39,6 +41,23 @@ export default class Rec extends Vue {
   created(){
     this.init()
   }
+  mounted(){
+    this.$EventBus.$on('deleteNoteFover',this.deleteNoteFover)
+    this.$EventBus.$on('restoreNote',this.restoreNote)
+
+  }
+  deleteNoteFover(noteData:NoteDataType){
+    this.recList.splice(this.recList.findIndex(item=>item.id===noteData.id),1)
+  }
+  restoreNote(noteData:NoteDataType){
+    this.recList.splice(this.recList.findIndex(item=>item.id===noteData.id),1)
+  }
+  beforeDestroy(){
+    this.$EventBus.$off('deleteNoteFover')
+    this.$EventBus.$off('restoreNote')
+
+  }
+
 
   clear(){
     this.axios.delete('/recycle/all').then(res=>{

@@ -17,9 +17,6 @@
         </template>
       </NoteCard>
     </isotope>
-
-<!--    <Modal :note.sync="note" @modalRef="modal = $event" @dataChange="reRender"></Modal>-->
-
   </div>
 
 
@@ -29,19 +26,16 @@
 import {Component, Emit, Mixins, Prop, PropSync, Vue, Watch} from 'vue-property-decorator';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 import {NoteDataType} from '@/typs';
-import ArchiveTip from '@/components/ArchiveTip.vue';
 import Card from '@/components/Card.vue';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
-import Modal from '@/components/Modal.vue';
 import {namespace} from 'vuex-class';
 
 const notesStore = namespace('notesStore');
 
 
 @Component({
-  components: {Modal, Card}
+  components: { Card}
 })
-export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
+export default class Waterfalls extends Vue {
   @notesStore.Action('getNotes') getNotes!: Function;
   @PropSync('listArr', {type: Array}) asyncListArr!: NoteDataType[];
   @PropSync('isTop', {type: Boolean}) asyncIsTop!: Boolean;
@@ -54,25 +48,6 @@ export default class Waterfalls extends Mixins(ModalMixinBottomFunc) {
   modal: any | undefined;
   test_note: NoteDataType | undefined;
   note: NoteDataType = {
-    id: -1,
-    title: '',
-    content: '',
-    color: '',
-    archiveId: null,
-    userId: -1,
-    isTop: false,
-    Tags: []
-  };
-
-  created(){
-
-  }
-  mounted() {
-    // this.modal.$el.childNodes[0].style.overflow = 'visible';
-    // this.modal.$el.childNodes[0].style.borderRadius = '10px';
-  }
-
-  leaveItem:NoteDataType ={
     id: -1,
     title: '',
     content: '',

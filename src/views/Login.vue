@@ -60,13 +60,13 @@
           </label>
         </div>
 
-        <div
-            style="margin-top: 30px; display: flex; justify-content: space-around"
-        >
-          <a>QQ</a>
-          <a>GitHub</a>
-          <a>微信</a>
-        </div>
+<!--        <div-->
+<!--            style="margin-top: 30px; display: flex; justify-content: space-around"-->
+<!--        >-->
+<!--          <a>QQ</a>-->
+<!--          <a>GitHub</a>-->
+<!--          <a>微信</a>-->
+<!--        </div>-->
       </form>
     </div>
   </div>
@@ -159,7 +159,7 @@ export default class Login extends Vue {
             }
           });
         }).catch((error:any) => {
-          console.log('error');
+          throw error
         });
       }
     }
@@ -168,7 +168,7 @@ export default class Login extends Vue {
 }
 </script>
 <style scoped lang='scss'>
-@import "src/assets/scss/form";
+@import "../assets/scss/form";
 
 .form_box {
   width: 450px;

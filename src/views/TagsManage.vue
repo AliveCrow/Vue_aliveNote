@@ -96,7 +96,8 @@ export default class TagsManage extends Vue {
   }
   saveEdit() {
     this.axios.patch(`/tags/${this.tagData.id}`, {name: (this.$refs.input.value).trim()}).then(res => {
-      let tagIndex = this.tagsList.findIndex(item => item.id === this.tagData.id);
+      let tagIndex = this.tagsList.findIndex((item:{id:number}) => item.id === this.tagData.id);
+      //@ts-ignore
       this.tagsList[tagIndex].name = res.data.res.name;
     }).catch(error => {
       // console.log(error);
@@ -104,7 +105,7 @@ export default class TagsManage extends Vue {
   }
   deleteTag() {
     this.axios.delete(`/tags/${this.tagData.id}`).then(res => {
-      let tagIndex = this.tagsList.findIndex(item => item.id === this.tagData.id);
+      let tagIndex = this.tagsList.findIndex((item:{id:number}) => item.id === this.tagData.id);
       this.tagsList.splice(tagIndex, 1);
       this.iconType = 'success';
       this.content = '删除成功';

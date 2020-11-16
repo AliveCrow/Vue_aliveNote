@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import Login from '@/components/Login.vue';
+import Login from '@/views/Login.vue';
 
 @Component
 export default class ForgotPassword extends Login {

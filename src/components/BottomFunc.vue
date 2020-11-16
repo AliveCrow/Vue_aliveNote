@@ -71,31 +71,29 @@
 import {Component, Emit, Mixins, Prop, PropSync, Vue} from 'vue-property-decorator';
 import Card from '@/components/Card.vue';
 import {NoteDataType} from '@/typs';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 import ArchiveTip from '@/components/ArchiveTip.vue';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 import {mixins} from 'vue-class-component';
 import CommonData from '@/mixins/CommonData';
+import any = jasmine.any;
 @Component({
   components: {Card}
 })
 export default class BottomFunc extends mixins<any>(CommonData) {
   @Prop() modal?:any;
-  // @Prop() asyncNote!:NoteDataType;
 
-  @PropSync('note',{type:Object|null}) asyncNote!:NoteDataType;
+  @PropSync('note',{type:Object}) asyncNote!:Object;
+  $EventBus: any;
 
   mounted(){
-    if(this.asyncNote.length===0){
+    if(Object.keys(this.asyncNote)===[]){
       this.asyncNote = {Tags:[]}
     }
-
   }
 
-  whichUpdate(type,note){
+  whichUpdate(type: string, note: Object){
     this.$EventBus.$emit('whichUpdate',[type,note])
   }
-
   setColor(color:string){
       this.asyncNote.color = color;
       this.axios.patch(`/labels/${this.asyncNote.id}`, {color: color}).then(res => {
@@ -160,19 +158,22 @@ export default class BottomFunc extends mixins<any>(CommonData) {
     // this.updateType('setArchive')
     this.whichUpdate('setArchive',this.asyncNote)
   }
-  deleteNote(noteData: NoteDataType) {
+
+  deleteNote(noteData: Object) {
     if (this.$route.fullPath === '/rec') {
       //彻底删除
       this.axios.delete(`/labels/delete/${noteData.id}`).then(res=>{
+        this.$EventBus.$emit('deleteNoteFover',noteData)
         this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
       }).catch(error=>{
         this.$toast.error('请求错误')
       })
-    } else if (this.$route.fullPath === '/notes') {
+    } else if (this.$route.fullPath === '/notes'  || this.$route.fullPath === '/search') {
       //软删除
       this.axios.delete(`/labels/${noteData.id}`).then(res => {
         this.$EventBus.$emit('deleteNoteModal')
-        if (res.data.stateCode === 0) {
+        this.$EventBus.$emit('deleteNoteSearch',noteData)
+        if (res.data.stateCode === 0 && this.$route.fullPath !== '/search') {
           this.$toast.warning({
             component:ArchiveTip,
             props:{
@@ -207,15 +208,15 @@ export default class BottomFunc extends mixins<any>(CommonData) {
     // this.updateType('deleteNote')
     this.whichUpdate('deleteNote',this.asyncNote)
   }
-  restoreNote(noteData:NoteDataType){
+
+  restoreNote(noteData: Object){
     this.axios.post(`/labels/restore/${noteData.id}`).then(res=>{
+      this.$EventBus.$emit('restoreNote',noteData)
       this.$toast.success(res.data.res,{position:"bottom-left"} as CommonOptions)
     }).catch(error=>{
       this.$toast.error('请求错误')
     })
     // this.updateType('restoreNote')
-    this.whichUpdate('restoreNote',noteData)
-
   }
   selectTag(tag: any) {
     let i = this.asyncNote.Tags.findIndex((v: { id: number }) => v.id === tag.id);

@@ -13,13 +13,14 @@ import Waterfalls from '@/components/Waterfalls.vue';
 export default class Archive extends Vue {
 
   archiveList:NodeList[] =[];
+  $EventBus: any;
 
   init(){
     this.axios.get('/archive').then(res=>{
       this.archiveList = res.data.res[0].Labels
     })
   }
-  restoreArchive(e){
+  restoreArchive(e: { id: any; }){
     let index = this.archiveList.findIndex(item=>item.id === e.id)
     this.archiveList.splice(index,1)
   }

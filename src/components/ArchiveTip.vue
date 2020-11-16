@@ -10,7 +10,7 @@ import {Component, Emit, Mixins, Prop, Vue} from 'vue-property-decorator';
 
 @Component
 export default class ArchiveTip extends Vue {
-  @Prop(String) content: string | undefined;
+  @Prop(String) content?: string ;
 
   @Emit('abc')
   abc(){

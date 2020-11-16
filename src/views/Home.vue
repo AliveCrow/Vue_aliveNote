@@ -19,7 +19,7 @@
       <div class="content_input">
         <label>
           <span>登录账户:</span>
-          <input type="text" disabled class="input_disable" v-model="user.username" />
+          <input type="text" disabled  class="input_disable"  v-model="user.username" />
         </label>
         <label>
           <span>昵称:</span>
@@ -27,7 +27,7 @@
         </label>
         <label>
           <span>邮箱:</span>
-          <input type="email" v-model="user.email" placeholder="邮箱是找回密码的唯一途径" />
+          <input type="email" disabled  class="input_disable" v-model="user.email" placeholder="邮箱是找回密码的唯一途径" />
         </label>
       </div>
     </section>
@@ -85,11 +85,13 @@ export default class Home extends Vue {
   getUser(userData: user) {
     this.user = userData;
     this.previewAvatar = this.user.avatar;
+    //@ts-ignore
     this.$refs.userInfo.open();
   }
 
   //上传图片
   handleFiles() {
+    //@ts-ignore
     let uploadFile = this.$refs.uploadImg.files[0];
     //图片不能过大
     let number = uploadFile.size;
@@ -112,6 +114,7 @@ export default class Home extends Vue {
             `?${Math.random() * 314}`;
         }
         this.axios.patch("/users", this.user).then((res) => {
+          //@ts-ignore
           this.$refs.submited.open();
         });
       })

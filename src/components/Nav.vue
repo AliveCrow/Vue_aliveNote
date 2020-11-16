@@ -73,6 +73,7 @@ export default class Nav extends Vue {
   slideShow:boolean = false;
 
   @State('userInfo', {namespace: 'userInfo'}) userInfo!:user;
+  $EventBus: any;
 
 
   // @PropSync('keyword',{type:String}) asyncKeyWord!:string
@@ -86,7 +87,6 @@ export default class Nav extends Vue {
     this.$EventBus.$emit('input',this.keyword)
   }
 
-
   created() {
     this.axios.get('/users').then(res => {
       this.$nextTick(() => {
@@ -99,7 +99,7 @@ export default class Nav extends Vue {
         };
       });
     }).catch(error=>{
-      console.log(error);
+      throw error
     });
   }
 
@@ -114,8 +114,10 @@ export default class Nav extends Vue {
     this.$router.push('/transit')
   }
   exit(){
-    localStorage.removeItem('jwt_token')
-    this.$router.push('login')
+    this.axios.post('/users/exit').then(res=>{
+      localStorage.removeItem('jwt_token')
+      this.$router.push('login')
+    })
   }
 
   pushSearch(){

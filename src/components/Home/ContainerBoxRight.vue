@@ -5,6 +5,7 @@
       <div class="top_note list">
         <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" >置顶的notes
         </div>
+        <div v-show="topList.length===0">没有置顶的notes目前</div>
         <Waterfalls @update:isTop="true"
                     :listArr="topList"
                     @asyncListArr="changeNote"
@@ -13,6 +14,7 @@
 
       <div class="list">
         <div style="text-align: left;font-size: 1.1rem;padding-bottom: 10px" >notes</div>
+        <div v-show="list.length===0">没有notes目前</div>
         <Waterfalls @update:isTop="false"
                     :listArr="list"
                     @asyncListArr="changeNote"
@@ -61,13 +63,9 @@ import InputCard from '@/components/InputCard.vue';
 import Card from '@/components/Card.vue';
 import NoteCard from '@/components/NoteCard.vue';
 import {Action, namespace} from 'vuex-class';
-import HomeMixin from '@/mixins/HomeMixin';
-import updateNoteMixin from '@/mixins/updateNoteMixin';
 import ArchiveTip from '@/components/ArchiveTip.vue';
 import Waterfalls from '@/components/Waterfalls.vue';
 import {NoteDataType} from '@/typs';
-import ModalUpdateContent from '@/mixins/ModalUpdateContent';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 import BottomFunc from '@/components/BottomFunc.vue';
 
@@ -76,9 +74,15 @@ const notesStore = namespace('notesStore');
 @Component({
   components: {BottomFunc, Waterfalls, NoteCard, Card, InputCard}
 })
-export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin) {
+export default class ContainerBoxRight extends Vue {
   @notesStore.Action('getNotes') getNotes!: Function;
   @notesStore.State('notes') notes: any;
+
+  $refs!:{
+    title:Element;
+    input_2:Element;
+    modal:any
+  }
   list: NoteDataType[] = [];
   topList: NoteDataType[] = [];
   allList: [] = [];
@@ -92,19 +96,18 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
   isShow: boolean = false;
   noteData: {} = {};
   tags: [] | undefined;
+  $EventBus: any;
+  leaveItem: NoteDataType | undefined;
 
-  close() {
-    this.isShow = false;
-  }
-
-
-  init() {
-    this.getNotes().then((result: any) => {
-      this.allList = result.res;
-      this.topList = this.allList.filter((item: { isTop: boolean | null; archiveId: number | null }) => item.isTop && item.archiveId === null);
-      this.list = this.allList.filter((item: { isTop: boolean | null; archiveId: number | null }) => !item.isTop && item.archiveId === null);
-    });
-  }
+  clickedNoteData: NoteDataType = {
+    title:'',
+    content:'',
+    color:'',
+    archiveId:null,
+    userId:-1,
+    isTop:false,
+    Tags:[]
+  };
 
 
   created() {
@@ -128,6 +131,20 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
     this.$EventBus.$off('whichUpdate',this.reRender)
   }
 
+  close() {
+    this.isShow = false;
+  }
+
+
+  init() {
+    this.getNotes().then((result: any) => {
+      this.allList = result.res;
+      this.topList = this.allList.filter((item: { isTop: boolean | null; archiveId: number | null }) => item.isTop && item.archiveId === null);
+      this.list = this.allList.filter((item: { isTop: boolean | null; archiveId: number | null }) => !item.isTop && item.archiveId === null);
+    });
+  }
+
+
   save(){
     if(this.clickedNoteData.title === this.$refs.title.innerHTML && this.clickedNoteData.content === this.$refs.input_2.innerHTML){
       return
@@ -145,7 +162,7 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
     });
   }
 
-  isTopfilter(type,note){
+  isTopfilter(type: string, note: NoteDataType){
     let a = this.topList.findIndex(item=>item.id===note.id)
     if(type === 'restoreArchive' || type === 'restore'){
       if(this.$route.fullPath === '/archive'){
@@ -162,7 +179,7 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
       this.topList.splice(a, 1);
     }
   }
-  notTopfilter(type,note){
+  notTopfilter(type: string, note: NoteDataType){
     let b = this.list.findIndex(item=>item.id===note.id)
      if(type === 'restoreArchive' || type === 'restore'){
       this.list.push(note)
@@ -172,6 +189,7 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
       this.list.splice(b, 1);
     }
   }
+
   reRender(e:any) {
     let type = e[0]
     let note = e[1]
@@ -183,16 +201,14 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
     }
   }
 
-  clickedNoteData: NoteDataType = [];
-
-  setNoteData(e) {
+  setNoteData(e: NoteDataType) {
     this.clickedNoteData = e;
     this.$refs.modal.open();
     this.$refs.modal.$el.childNodes[0].style.overflow = 'visible';
     this.$refs.modal.$el.childNodes[0].style.borderRadius = '10px';
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${e.color}`;
   }
-  setBgc(e){
+  setBgc(e: string){
     this.$refs.modal.$el.childNodes[0].style.backgroundColor = `${e}`;
   }
   closeModal(){
@@ -222,6 +238,9 @@ export default class ContainerBoxRight extends Mixins(HomeMixin, updateNoteMixin
 </script>
 <style scoped lang='scss'>
 @import "src/assets/scss/var";
+.top_note{
+  min-height: 100px;
+}
 
 .NoteCard_app_content {
   word-break: break-all;

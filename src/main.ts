@@ -6,7 +6,6 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import isotope from 'vueisotope'
-import At from 'vue-at'
 import SweetModal from 'sweet-modal-vue/src/plugin.js'
 
 
@@ -20,12 +19,11 @@ import { directive as onClickaway } from 'vue-clickaway'
 import EvaIcons from 'vue-eva-icons';
 import NoteCard from '@/components/NoteCard.vue';
 
-var eventBus = new Vue()
+let eventBus = new Vue()
 Vue.prototype.$EventBus = eventBus
 Vue.config.productionTip = false
 
 Vue.directive('on-clickaway', onClickaway)
-// Vue.use(VueDragZone)
 Vue.use(VueAxios, _axios)
 Vue.use(EvaIcons)
 Vue.use(SweetModal)
@@ -59,7 +57,6 @@ Vue.use(Toast, {
 
 Vue.component('NoteCard',NoteCard)
 Vue.component('isotope',isotope)
-Vue.component('At',At)
 
 new Vue({
   router,

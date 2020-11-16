@@ -1,7 +1,8 @@
 <template>
   <div id='Search_app'>
-      <span v-show="searchList.length === 0" >找不到相符的搜索结果。</span>
-      <waterfalls  :list-arr="searchList" ></waterfalls>
+      <span v-show="searchList.length === 0 && !load" >找不到相符的搜索结果。</span>
+    <eva-icon name="loader-outline" class="icons" v-show="load" height="30px" width="30px"></eva-icon>
+      <Waterfalls  :list-arr="searchList" ></Waterfalls>
   </div>
 </template>
 
@@ -14,29 +15,40 @@ import any = jasmine.any;
   components: {Waterfalls}
 })
 export default class Search extends Vue {
+  $EventBus: any;
 
   mounted(){
     this.$EventBus.$on('input',this.in)
+    this.$EventBus.$on('deleteNoteSearch',this.deleteNoteSearch)
+
   }
   beforeDestroy(){
     this.$EventBus.$off('input')
+    this.$EventBus.$off('deleteNoteSearch',this.deleteNoteSearch)
   }
   searchList:NoteDataType[] = [];
 
-  in(e){
+  deleteNoteSearch(note:NoteDataType){
+    this.searchList.splice(this.searchList.findIndex(item=>item.id===note.id),1)
+  }
+  in(e: string){
     this.search(e)
   }
 
+  load:boolean = false;
   search(keyword:string) {
+    this.load = true
     this.debounce(()=>{
       if(keyword===''){
         this.searchList = []
         return
       }
       this.axios.get(`/search?keyword=${keyword}`).then(res => {
+          //@ts-ignore
+          this.load = false
         this.searchList = res.data.res
       })
-    },1000)
+    },2000)
 
   }
   //节流
@@ -78,7 +90,24 @@ export default class Search extends Vue {
 }
 #Search_app{
   margin: 50px 0 0 50px;
+  .icons{
+    height: 30px;
+    width: 30px;
+    animation: rotate-loading 1s linear infinite  ;
+    transform-origin: center center;
+    opacity: 0;
+  }
 
+  @keyframes rotate-loading {
+    0%{
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+    100%{
+      transform: rotate(360deg);
+      opacity: 1;
+    }
+  }
 
 }
 

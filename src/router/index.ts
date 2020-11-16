@@ -77,7 +77,7 @@ const routes: Array<RouteConfig> = [
                 meta: {
                     requireAuth: false
                 },
-                component: () => import('@/components/Login.vue')
+                component: () => import('@/views/Login.vue')
             },
             {
                 path: '/register',
@@ -85,7 +85,7 @@ const routes: Array<RouteConfig> = [
                 meta: {
                     requireAuth: false
                 },
-                component: () => import('@/components/Register.vue')
+                component: () => import('@/views/Register.vue')
             },
             {
                 path: '/forgotPassword',

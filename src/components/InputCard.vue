@@ -72,9 +72,8 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Mixins, PropSync, Vue} from 'vue-property-decorator';
+import {Component, Emit, PropSync} from 'vue-property-decorator';
 import Card from '@/components/Card.vue';
-import ArchiveTip from '@/components/ArchiveTip.vue';
 import {CommonOptions} from 'vue-toastification/dist/types/src/types';
 import CommonData from '@/mixins/CommonData';
 import {mixins} from 'vue-class-component';
@@ -86,10 +85,10 @@ export default class InputCard extends  mixins(CommonData) {
   @PropSync('isShow', {type: Boolean}) show!: boolean;
   selectedTags: [] = [];
   selected: number |null = null;
-  html:string = ''
-  // @Emit('open')
   isTop:boolean = false;
   selectedColor:string |undefined;
+
+
   @Emit('submit')
   submit(type: string) {
     this.show = false;
@@ -108,6 +107,7 @@ export default class InputCard extends  mixins(CommonData) {
     this.reset();
     return note;
   }
+
 
   created() {
     this.$nextTick(() => {
@@ -174,10 +174,7 @@ export default class InputCard extends  mixins(CommonData) {
       console.log(error);
     });
 
-
   }
-
-
 
 }
 </script>

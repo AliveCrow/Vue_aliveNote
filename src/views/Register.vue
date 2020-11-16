@@ -38,7 +38,7 @@
                  name="email"
                  type="text"
                  class="form_box__input g_border"
-                 placeholder="邮箱(选填,找回密码使用)"
+                 placeholder="邮箱(找回密码使用，务必填写)"
                  autocomplete="none"
                  ref="email"
                  v-model.trim="registerObj.email"
@@ -118,10 +118,18 @@ export default class Register extends Vue {
     password: '',
     password_confirm: ''
   };
-
-
-  created() {
-  }
+  successClass: successClassConfig = (el, el_msg) => {
+    el.classList.remove('g_error');
+    el.classList.add('g_success');
+    el_msg.style.display = 'none';
+    el_msg.innerText = '';
+  };
+  failClass: failClassConfig = (el, el_msg, msg) => {
+    el.classList.remove('g_success');
+    el.classList.add('g_error');
+    el_msg.style.display = 'inline-block';
+    el_msg.innerText = msg;
+  };
 
   register(e: any) {
     e.preventDefault();
@@ -163,22 +171,15 @@ export default class Register extends Vue {
 
   }
 
-  successClass: successClassConfig = (el, el_msg) => {
-    el.classList.remove('g_error');
-    el.classList.add('g_success');
-    el_msg.style.display = 'none';
-    el_msg.innerText = '';
-  };
-  failClass: failClassConfig = (el, el_msg, msg) => {
-    el.classList.remove('g_success');
-    el.classList.add('g_error');
-    el_msg.style.display = 'inline-block';
-    el_msg.innerText = msg;
-  };
-
   rule() {
     return new Promise((resolve, reject) => {
-      if (this.verificationUsername(this.registerObj.username) && this.verificationNickname(this.registerObj.nickname) && this.verificationPassword(this.registerObj.password) && this.passwordIsSame(this.registerObj.password, this.registerObj.password_confirm)) {
+      if (this.verificationUsername(this.registerObj.username) &&
+          this.verificationNickname(this.registerObj.nickname) &&
+          this.verificationPassword(this.registerObj.password) &&
+          this.passwordIsSame(this.registerObj.password, this.registerObj.password_confirm) &&
+          this.verificationEmail(this.registerObj.email)
+
+      ) {
         resolve();
       } else {
         reject();
@@ -213,7 +214,7 @@ export default class Register extends Vue {
       this.successClass(this.$refs.form[2], this.$refs.email_msg);
       return true;
     } else {
-      this.failClass(this.$refs.form[2], this.$refs.email_msg, '邮箱错误');
+      this.failClass(this.$refs.form[2], this.$refs.email_msg, '邮箱格式错误');
       return false;
     }
   }
@@ -241,7 +242,7 @@ export default class Register extends Vue {
 }
 </script>
 <style scoped lang='scss'>
-@import "src/assets/scss/form";
+@import "../assets/scss/form";
 
 .form_box {
   width: 800px;

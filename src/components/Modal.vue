@@ -34,13 +34,12 @@
 <script lang="ts">
 import {Component, Emit, Mixins, Prop, PropSync, Vue, Watch} from 'vue-property-decorator';
 import {NoteDataType} from '@/typs';
-import ModalMixinBottomFunc from '@/mixins/ModalMixinBottomFunc';
 import BottomFunc from '@/components/BottomFunc.vue';
 
 @Component({
   components: {BottomFunc}
 })
-export default class Modal extends Mixins(ModalMixinBottomFunc) {
+export default class Modal extends Vue {
   @PropSync('note', {type:Object}) asyncNote!: NoteDataType;
 
   @Emit('modalRef')
