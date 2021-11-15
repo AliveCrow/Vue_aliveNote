@@ -4,7 +4,7 @@ import Vue from 'vue';
 import axios, {AxiosRequestConfig} from 'axios';
 import router from '@/router';
 
-const baseUrl = 'http://1.15.180.227:3301';
+const baseUrl = 'https://1.15.180.227:3301';
 // http://1.15.180.227:3301
 const apiUrl = '';
 
