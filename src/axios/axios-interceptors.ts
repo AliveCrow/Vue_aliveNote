@@ -4,14 +4,15 @@ import Vue from 'vue';
 import axios, {AxiosRequestConfig} from 'axios';
 import router from '@/router';
 
-const baseUrl = 'http://alivenote.dreamsakula.top:3310';
+const baseUrl = 'http://1.15.180.227:3301';
+// http://1.15.180.227:3301
 const apiUrl = '';
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-const option:AxiosRequestConfig = {
+const option: AxiosRequestConfig = {
     baseURL: baseUrl,
     timeout: 5000,
     load:false
